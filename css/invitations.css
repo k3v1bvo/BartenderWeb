@@ -1,0 +1,270 @@
+/* invitations.css - Styling for Digital Invitation Showcase & Live Previews */
+
+.invitation-section {
+  background: linear-gradient(180deg, rgba(11, 19, 43, 0.5) 0%, rgba(7, 13, 27, 0.9) 100%);
+  position: relative;
+}
+
+.inv-packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.inv-pkg-card {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.inv-pkg-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--glass-border);
+  box-shadow: var(--shadow-gold);
+}
+
+.inv-pkg-card.popular {
+  border-color: var(--accent-gold);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+}
+
+/* Invitation Sample Showcase Gallery */
+.inv-samples-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 2rem;
+}
+
+.sample-card {
+  background: #0B132B;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.sample-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-gold);
+}
+
+.sample-img-box {
+  width: 100%;
+  height: 240px;
+  position: relative;
+}
+
+.sample-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sample-overlay-tag {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(11, 19, 43, 0.9);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  color: var(--accent-gold);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+}
+
+.sample-content {
+  padding: 1.75rem;
+}
+
+.sample-title {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.sample-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+/* Interactive Live Invitation Simulator Modal (Phone-style or Full Card) */
+.invitation-preview-container {
+  max-width: 480px !important;
+  border-radius: 36px !important;
+  border: 3px solid var(--accent-gold) !important;
+  background: #0B132B !important;
+  padding: 0 !important;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.4) !important;
+}
+
+.inv-phone-screen {
+  background-color: #0F172A;
+  color: #FFF;
+  min-height: 680px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+/* Themes for Invitations */
+.inv-phone-screen.boda-theme {
+  background: linear-gradient(180deg, #1E1B18 0%, #0F172A 100%);
+  border-top: 5px solid #D4AF37;
+}
+
+.inv-phone-screen.quince-theme {
+  background: linear-gradient(180deg, #2D1B2D 0%, #0F172A 100%);
+  border-top: 5px solid #EC4899;
+}
+
+.inv-phone-screen.corp-theme {
+  background: linear-gradient(180deg, #0F2027 0%, #203A43 50%, #2C5364 100%);
+  border-top: 5px solid #3B82F6;
+}
+
+.inv-phone-header {
+  padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+  text-align: center;
+}
+
+.inv-monogram {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2px solid var(--accent-gold);
+  margin: 0 auto 1rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+}
+
+.inv-names {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+}
+
+.inv-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Countdown Timer */
+.inv-countdown-box {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border-subtle);
+}
+
+.time-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+}
+
+.time-lbl {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Details Box */
+.inv-details-card {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1rem 1.5rem;
+  border: 1px solid var(--glass-border-subtle);
+}
+
+.inv-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.inv-detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.inv-detail-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(212, 175, 55, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-gold);
+}
+
+/* RSVP Interactive Form */
+.inv-rsvp-section {
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 1px solid var(--glass-border-subtle);
+  text-align: center;
+}
+
+.rsvp-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--radius-md);
+  color: #FFF;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.rsvp-input:focus {
+  outline: none;
+  border-color: var(--accent-gold);
+}
+
+.inv-qr-display {
+  width: 120px;
+  height: 120px;
+  background: #FFF;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  margin: 1rem auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+.inv-qr-display img {
+  width: 100%;
+  height: 100%;
+}

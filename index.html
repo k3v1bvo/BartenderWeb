@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bartender Pro Cochabamba - Coctelería de Autor & Invitaciones Digitales</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS StyleSheets -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/invitations.css">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="nav-brand">
+        <div class="brand-icon">🍸</div>
+        <div class="brand-text">
+          <span class="brand-name">Bartender <span class="text-gold">PRO</span></span>
+          <span class="brand-tag">Cochabamba - Bolivia</span>
+        </div>
+      </a>
+
+      <ul class="nav-menu">
+        <li><a href="#paquetes" class="nav-link active">Paquetes</a></li>
+        <li><a href="#menu" class="nav-link">Menú de Cocteles</a></li>
+        <li><a href="#invitaciones" class="nav-link">Invitaciones Digitales</a></li>
+        <li><a href="#galeria" class="nav-link">Galería de Eventos</a></li>
+      </ul>
+
+      <!-- Mode Switcher: Client View vs Admin View -->
+      <div class="mode-switcher">
+        <button id="modeClientBtn" class="mode-btn active">👁️ Vista Cliente</button>
+        <button id="modeAdminBtn" class="mode-btn">⚙️ Panel Admin</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ==================== VISTA CLIENTE / USUARIO ==================== -->
+  <div id="clientViewSection">
+    
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <div class="hero-badge-group">
+              <span class="badge-tag">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+                Google Calendar Sync
+              </span>
+              <span class="badge-tag">
+                💳 QR Simple Bolivia
+              </span>
+              <span class="badge-tag">
+                💌 Invitaciones Web RSVP
+              </span>
+            </div>
+
+            <h1 class="hero-title">
+              Coctelería de Autor & <span class="text-gold">Invitaciones Digitales</span> para tus Eventos
+            </h1>
+
+            <p class="hero-description">
+              Elevamos la barra de tu boda, 15 años o fiesta corporativa en Cochabamba con tragos exclusivos a base de Singani de altura y un servicio integrado de invitaciones interactivas con pase QR.
+            </p>
+
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="openBookingModal('pkg-premium')">
+                🍹 Reservar Mi Evento Ahora
+              </button>
+              <a href="#invitaciones" class="btn btn-secondary">
+                💌 Probar Invitaciones Digitales
+              </a>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-item">
+                <span class="stat-num">250+</span>
+                <span class="stat-label">Eventos en la Llajta</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">4.9 ★</span>
+                <span class="stat-label">Calificación de Clientes</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">100%</span>
+                <span class="stat-label">Pagos por QR Seguros</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero Visual Cards Showcase -->
+          <div class="hero-visual">
+            <div class="main-hero-card">
+              <div class="hero-img-box">
+                <img src="https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80" alt="Coctelería de Autor Cochabamba">
+              </div>
+              <div style="margin-top: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h3 style="font-size: 1.2rem; color: #FFF;">Chuflay de Gala & Tumbo Sour</h3>
+                  <span style="font-size: 0.85rem; color: var(--text-gold);">Singani Gran Reserva • Frutas del Valle</span>
+                </div>
+                <span class="pkg-capacity">Estación VIP</span>
+              </div>
+            </div>
+
+            <!-- Floating Glass Badges -->
+            <div class="floating-glass-badge">
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; color: #10B981; font-weight: bold;">✓</div>
+              <div>
+                <strong style="font-size: 0.85rem; display: block; color: #FFF;">Reserva Automática 24/7</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Sincronizada con Google Calendar</span>
+              </div>
+            </div>
+
+            <div class="floating-badge-2">
+              <span>📱 Pase Digital RSVP con QR</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: CATÁLOGO DE PAQUETES DE BARTENDER -->
+    <section id="paquetes" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-subtitle">NUESTRA OFERTA DE SERVICIOS</span>
+          <h2 class="section-title">Paquetes de Coctelería de Autor</h2>
+          <p class="section-desc">Selecciona el nivel de experiencia ideal según el tamaño y estilo de tu evento en Cochabamba.</p>
+        </div>
+
+        <div class="cards-grid">
+          <!-- Paquete Básico -->
+          <div class="pkg-card">
+            <span class="pkg-badge" style="background: rgba(255,255,255,0.15); color: #fff;">Reuniones Íntimas</span>
+            <div class="pkg-header">
+              <h3 class="pkg-name">Paquete Básico</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Barra libre esencial con lo mejor de la coctelería tradicional.</p>
+              <div class="pkg-price-box">
+                <span class="pkg-price">Bs. 850</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">/ evento</span>
+              </div>
+              <span class="pkg-capacity">Hasta 40 Personas</span>
+            </div>
+
+            <ul class="pkg-includes-list">
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 1 Bartender Profesional uniformado</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 3 Cócteles a elección (Clásicos o Tradicionales)</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Barra móvil con iluminación LED</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Servicio durante 4 horas continuas</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Agenda directa en Google Calendar</li>
+            </ul>
+
+            <button class="btn btn-outline" style="width: 100%;" onclick="openBookingModal('pkg-basico')">
+              Seleccionar Básico
+            </button>
+          </div>
+
+          <!-- Paquete Premium (Destacado) -->
+          <div class="pkg-card popular">
+            <span class="pkg-badge">MÁS POPULAR EN LA LLAJTA ⭐</span>
+            <div class="pkg-header">
+              <h3 class="pkg-name" style="color: var(--accent-gold);">Paquete Premium</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Coctelería de Autor con Singani, Show Flair y flameado de barra.</p>
+              <div class="pkg-price-box">
+                <span class="pkg-price">Bs. 1.600</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">/ evento</span>
+              </div>
+              <span class="pkg-capacity" style="background: rgba(212,175,55,0.2);">Hasta 100 Personas</span>
+            </div>
+
+            <ul class="pkg-includes-list">
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 2 Bartenders + Mixólogo de Autor</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 5 Cócteles exclusivos (Incluye Singani de Altura)</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Show de Flair Bartending con fuego</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Cristalería fina de vidrio tallado y shots VIP</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Servicio durante 6 horas continuas</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Integrado con Pasarela QR Simple</li>
+            </ul>
+
+            <button class="btn btn-primary" style="width: 100%;" onclick="openBookingModal('pkg-premium')">
+              Reservar Paquete Premium
+            </button>
+          </div>
+
+          <!-- Paquete VIP -->
+          <div class="pkg-card">
+            <span class="pkg-badge" style="background: #3B82F6; color: #fff;">Bodas & Grandes Galas</span>
+            <div class="pkg-header">
+              <h3 class="pkg-name">Paquete VIP Elite</h3>
+              <p style="font-size: 0.85rem; color: var(--text-muted);">Servicio a medida para bodas y recepciones de gran escala.</p>
+              <div class="pkg-price-box">
+                <span class="pkg-price">Bs. 2.800</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);">/ evento</span>
+              </div>
+              <span class="pkg-capacity">Más de 150 Personas</span>
+            </div>
+
+            <ul class="pkg-includes-list">
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 3 Bartenders VIP + Sommelier dedicado</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Menú Abierto ilimitado Nacional e Internacional</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Pistola de humo aromático + Burbujas en tragos</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Barra Móvil Temática de Lujo en Madera y Mármol</li>
+              <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Incluye Descuento en Combo de Invitaciones Web</li>
+            </ul>
+
+            <button class="btn btn-outline" style="width: 100%;" onclick="openBookingModal('pkg-vip')">
+              Cotizar Paquete VIP
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: MENÚ DE CÓCTELES CON FILTROS -->
+    <section id="menu" class="section" style="background: rgba(11, 19, 43, 0.4);">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-subtitle">CARTA DIGITAL</span>
+          <h2 class="section-title">Menú de Coctelería Cochabambina</h2>
+          <p class="section-desc">Explora nuestras creaciones con insumos locales, Singani de reserva y clásicos internacionales.</p>
+        </div>
+
+        <div id="drinkFilterTabs" class="filter-tabs">
+          <button class="tab-btn active" onclick="filterDrinks('all', this)">Todos los Tragos</button>
+          <button class="tab-btn" onclick="filterDrinks('autor', this)">🍸 Coctelería de Autor</button>
+          <button class="tab-btn" onclick="filterDrinks('tradicional', this)">🇧🇴 Tradicionales de Bolivia</button>
+          <button class="tab-btn" onclick="filterDrinks('clasico', this)">🍹 Clásicos Internacionales</button>
+          <button class="tab-btn" onclick="filterDrinks('sin_alcohol', this)">🍃 Mocktails (Sin Alcohol)</button>
+        </div>
+
+        <div id="drinksGridContainer" class="cards-grid">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: INVITACIONES DIGITALES (LA NUEVA LÍNEA DE NEGOCIO) -->
+    <section id="invitaciones" class="section invitation-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-subtitle">NUEVA LÍNEA DE NEGOCIO PARA TU CLIENTE</span>
+          <h2 class="section-title">Invitaciones Digitales e Interactivas</h2>
+          <p class="section-desc">Ofrece a tus clientes un catálogo de invitaciones web con confirmación de asistencia RSVP, mapa de Cochabamba y pases con código QR.</p>
+        </div>
+
+        <!-- Invitation Packages -->
+        <div class="inv-packages-grid">
+          <div class="inv-pkg-card">
+            <span class="badge-tag" style="margin-bottom: 1rem; width: max-content;">PDF WhatsApp</span>
+            <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Invitación Básica PDF</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Ideal para compartir rápidamente en grupos de WhatsApp.</p>
+            <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 1.25rem;">Bs. 150</div>
+            <ul class="pkg-includes-list" style="margin-bottom: 1.5rem;">
+              <li>✓ Diseño gráfico en PDF de alta resolución</li>
+              <li>✓ Enlace directo a Google Maps</li>
+              <li>✓ Entrega en 48 horas</li>
+            </ul>
+            <button class="btn btn-outline btn-sm" onclick="openBookingModal('pkg-premium')">Contratar en mi Reserva</button>
+          </div>
+
+          <div class="inv-pkg-card popular">
+            <span class="badge-tag" style="margin-bottom: 1rem; width: max-content; background: var(--accent-gold); color: #000;">⭐ RECOMENDADO</span>
+            <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--accent-gold);">Invitación Web Premium con RSVP</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Página web exclusiva del evento con formulario de asistencia y pase QR.</p>
+            <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 1.25rem;">Bs. 300</div>
+            <ul class="pkg-includes-list" style="margin-bottom: 1.5rem;">
+              <li>✓ Web propia (ej: boda-carlos-sofia.bo)</li>
+              <li>✓ Formulario de confirmación de asistencia (RSVP)</li>
+              <li>✓ Cronómetro regresivo y pase individual por QR</li>
+              <li>✓ Ubicación en Google Maps / Waze Cochabamba</li>
+            </ul>
+            <button class="btn btn-primary btn-sm" onclick="openBookingModal('pkg-premium')">Contratar en mi Reserva</button>
+          </div>
+
+          <div class="inv-pkg-card">
+            <span class="badge-tag" style="margin-bottom: 1rem; width: max-content; background: #3B82F6; color: #fff;">Combo VIP</span>
+            <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Combo Evento VIP Completo</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Web Premium + QR para Mesa de Bienvenida + Galería post-evento.</p>
+            <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 1.25rem;">Bs. 450</div>
+            <ul class="pkg-includes-list" style="margin-bottom: 1.5rem;">
+              <li>✓ Todo lo del paquete Premium</li>
+              <li>✓ Código QR impreso para recepción en mesa</li>
+              <li>✓ Galería digital para fotos de invitados post-evento</li>
+              <li>✓ Recordatorios automáticos por WhatsApp</li>
+            </ul>
+            <button class="btn btn-outline btn-sm" onclick="openBookingModal('pkg-vip')">Contratar en mi Reserva</button>
+          </div>
+        </div>
+
+        <!-- Sample Showcase Cards with Live Previews -->
+        <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.6rem;">📱 Demostración Interactiva de Diseños</h3>
+        
+        <div class="inv-samples-grid">
+          <!-- Boda Sample -->
+          <div class="sample-card">
+            <div class="sample-img-box">
+              <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80" alt="Boda Elegante">
+              <span class="sample-overlay-tag">BODA DE GALA</span>
+            </div>
+            <div class="sample-content">
+              <h4 class="sample-title">Boda Carlos & Sofía</h4>
+              <div class="sample-meta">
+                <span>📍 Centro de Eventos El Bosque, Tiquipaya</span>
+                <span>📅 15 de Octubre, 2026</span>
+              </div>
+              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-boda" style="width: 100%;">
+                👁️ Probar Invitación Web (Demo)
+              </button>
+            </div>
+          </div>
+
+          <!-- 15 Años Sample -->
+          <div class="sample-card">
+            <div class="sample-img-box">
+              <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80" alt="15 Años">
+              <span class="sample-overlay-tag" style="color: #EC4899;">15 AÑOS</span>
+            </div>
+            <div class="sample-content">
+              <h4 class="sample-title">Mis 15 Años - Valeria Alexandra</h4>
+              <div class="sample-meta">
+                <span>📍 Salón de Eventos Pairumani</span>
+                <span>📅 28 de Noviembre, 2026</span>
+              </div>
+              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-15" style="width: 100%;">
+                👁️ Probar Invitación Web (Demo)
+              </button>
+            </div>
+          </div>
+
+          <!-- Corporativo Sample -->
+          <div class="sample-card">
+            <div class="sample-img-box">
+              <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80" alt="Gala Corporativa">
+              <span class="sample-overlay-tag" style="color: #3B82F6;">CORPORATIVO</span>
+            </div>
+            <div class="sample-content">
+              <h4 class="sample-title">Gala Aniversario Banco BNB</h4>
+              <div class="sample-meta">
+                <span>📍 Hotel Cochabamba - La Recoleta</span>
+                <span>📅 12 de Diciembre, 2026</span>
+              </div>
+              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-corp" style="width: 100%;">
+                👁️ Probar Invitación Web (Demo)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: GALERÍA DE EVENTOS REALES EN COCHABAMBA -->
+    <section id="galeria" class="section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-subtitle">NUESTRO TRABAJO EN LA LLAJTA</span>
+          <h2 class="section-title">Galería de Eventos Reales</h2>
+          <p class="section-desc">Barras móviles montadas en salones icónicos y quintas de Cochabamba.</p>
+        </div>
+
+        <div id="galleryFilterTabs" class="filter-tabs">
+          <button class="tab-btn active" onclick="filterGallery('all', this)">Todos los Eventos</button>
+          <button class="tab-btn" onclick="filterGallery('bodas', this)">Bodas de Gala</button>
+          <button class="tab-btn" onclick="filterGallery('quince', this)">15 Años</button>
+          <button class="tab-btn" onclick="filterGallery('corporativo', this)">Corporativos</button>
+          <button class="tab-btn" onclick="filterGallery('barras', this)">Montaje de Barras</button>
+        </div>
+
+        <div id="galleryGridContainer" class="cards-grid">
+          <!-- Rendered dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- FIN VISTA CLIENTE -->
+
+  <!-- ==================== PANEL DE ADMINISTRACIÓN (MODO BARTENDER) ==================== -->
+  <div id="adminDashboardSection" class="admin-dashboard">
+    <div class="container">
+      
+      <!-- Top Admin Header -->
+      <div class="admin-header-bar">
+        <div class="admin-title-group">
+          <h1>⚙️ Panel de Control <span class="text-gold">Bartender Pro</span></h1>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Gestión centralizada de reservas, comprobantes por QR Simple e invitaciones digitales.</p>
+        </div>
+
+        <div class="sync-badge">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          Google Calendar Sincronizado
+        </div>
+      </div>
+
+      <!-- Metrics Cards -->
+      <div class="admin-metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">💰</div>
+          <div class="metric-data">
+            <span id="adminTotalRevenue" class="metric-val">Bs. 0</span>
+            <span class="metric-lbl">Ingresos Confirmados</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🕒</div>
+          <div class="metric-data">
+            <span id="adminPendingCount" class="metric-val">0</span>
+            <span class="metric-lbl">Reservas Pendientes</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">🔍</div>
+          <div class="metric-data">
+            <span id="adminReviewCount" class="metric-val">0</span>
+            <span class="metric-lbl">Comprobantes por Verificar</span>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-icon">💌</div>
+          <div class="metric-data">
+            <span class="metric-val">8</span>
+            <span class="metric-lbl">Invitaciones Digitales Activas</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bookings Table Container -->
+      <div class="admin-table-container">
+        <div class="table-top-bar">
+          <h3 class="table-title">Solicitudes de Reservas & Eventos</h3>
+          <div class="table-filter-group">
+            <button class="filter-btn-sm active">Todas</button>
+            <button class="filter-btn-sm">En Revisión</button>
+            <button class="filter-btn-sm">Confirmadas</button>
+          </div>
+        </div>
+
+        <div class="responsive-table">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID Reserva</th>
+                <th>Cliente / Anfitrión</th>
+                <th>Evento & Ubicación</th>
+                <th>Fecha Evento</th>
+                <th>Monto Total</th>
+                <th>Estado Pago</th>
+                <th>Google Calendar</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="adminBookingsTableBody">
+              <!-- Rendered dynamically by admin.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="background: rgba(212,175,55,0.05); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: var(--radius-md); text-align: center;">
+        <h4 style="color: var(--accent-gold); margin-bottom: 0.5rem;">💡 Muestra de Funcionalidad para el Cliente</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted);">Desde este panel el dueño del servicio de bartender verifica comprobantes subidos por QR Simple, aprueba solicitudes y sincroniza su agenda automáticamente con Google Calendar.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE RESERVA (WIZARD) ==================== -->
+  <div id="bookingModalOverlay" class="modal-overlay">
+    <div class="modal-container" style="max-width: 680px;">
+      <div class="modal-header">
+        <h3 style="color: var(--accent-gold);">Asistente de Reserva de Evento</h3>
+        <button id="closeBookingModalBtn" class="modal-close">✕</button>
+      </div>
+      <div id="bookingWizardContainer" class="modal-body">
+        <!-- Rendered dynamically by booking.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL PREVISUALIZADOR DE INVITACIONES ==================== -->
+  <div id="invitationModalOverlay" class="modal-overlay">
+    <div id="invitationModalContainer" class="modal-container invitation-preview-container">
+      <!-- Rendered dynamically by invitations.js -->
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer style="background: #040812; border-top: 1px solid var(--glass-border-subtle); padding: 3rem 0; margin-top: 4rem;">
+    <div class="container" style="text-align: center;">
+      <div style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">
+        Bartender <span class="text-gold">PRO</span> Cochabamba
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+        Paseo El Prado - Av. Ballivián #642, Cochabamba, Bolivia • WhatsApp: +591 797 12345
+      </p>
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.3);">
+        © 2026 Bartender Pro CBBA - Maqueta Web Interactiva de Frontend para Presentación Comercial.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/invitations.js"></script>
+  <script src="js/booking.js"></script>
+  <script src="js/admin.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

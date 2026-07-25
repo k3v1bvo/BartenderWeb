@@ -1,0 +1,22 @@
+{
+  "name": "bartender-pro-cochabamba",
+  "version": "1.0.0",
+  "description": "Sistema Web de Reservas e Invitaciones Digitales para Bartender Pro Cochabamba",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve ."
+  },
+  "keywords": [
+    "bartender",
+    "cochabamba",
+    "bolivia",
+    "reservas",
+    "invitaciones-digitales"
+  ],
+  "author": "Bartender Pro",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
