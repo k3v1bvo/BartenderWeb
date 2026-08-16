@@ -10,6 +10,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- External CDNs for Full Functionality -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
   <!-- CSS StyleSheets -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/invitations.css">
@@ -35,10 +40,17 @@
         <li><a href="#galeria" class="nav-link">Galería de Eventos</a></li>
       </ul>
 
-      <!-- Mode Switcher: Client View vs Admin View -->
-      <div class="mode-switcher">
-        <button id="modeClientBtn" class="mode-btn active">👁️ Vista Cliente</button>
-        <button id="modeAdminBtn" class="mode-btn">⚙️ Panel Admin</button>
+      <!-- Supabase Connection Badge & Mode Switcher -->
+      <div class="nav-actions-group">
+        <button id="supabaseStatusBadge" class="supabase-status-pill offline" onclick="openSupabaseConfigModal()" title="Configuración de Base de Datos Supabase">
+          <span class="status-dot offline"></span>
+          <span>⚙️ Conectar Supabase</span>
+        </button>
+
+        <div class="mode-switcher">
+          <button id="modeClientBtn" class="mode-btn active">👁️ Vista Cliente</button>
+          <button id="modeAdminBtn" class="mode-btn">⚙️ Panel Admin</button>
+        </div>
       </div>
     </div>
   </nav>
@@ -60,7 +72,7 @@
                 💳 QR Simple Bolivia
               </span>
               <span class="badge-tag">
-                💌 Invitaciones Web RSVP
+                💌 Invitaciones Web RSVP + QR
               </span>
             </div>
 
@@ -69,16 +81,16 @@
             </h1>
 
             <p class="hero-description">
-              Elevamos la barra de tu boda, 15 años o fiesta corporativa en Cochabamba con tragos exclusivos a base de Singani de altura y un servicio integrado de invitaciones interactivas con pase QR.
+              Elevamos la barra de tu boda, 15 años o fiesta corporativa en Cochabamba con tragos exclusivos a base de Singani de altura y una plataforma completa de invitaciones interactivas con confirmación RSVP y pase QR individual.
             </p>
 
             <div class="hero-actions">
               <button class="btn btn-primary" onclick="openBookingModal('pkg-premium')">
                 🍹 Reservar Mi Evento Ahora
               </button>
-              <a href="#invitaciones" class="btn btn-secondary">
-                💌 Probar Invitaciones Digitales
-              </a>
+              <button class="btn btn-secondary" onclick="openInvitationBuilderModal()">
+                ✨ Crear Mi Invitación Digital
+              </button>
             </div>
 
             <div class="hero-stats">
@@ -92,7 +104,7 @@
               </div>
               <div class="stat-item">
                 <span class="stat-num">100%</span>
-                <span class="stat-label">Pagos por QR Seguros</span>
+                <span class="stat-label">Base de Datos PostgreSQL</span>
               </div>
             </div>
           </div>
@@ -116,13 +128,13 @@
             <div class="floating-glass-badge">
               <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); display: flex; align-items: center; justify-content: center; color: #10B981; font-weight: bold;">✓</div>
               <div>
-                <strong style="font-size: 0.85rem; display: block; color: #FFF;">Reserva Automática 24/7</strong>
-                <span style="font-size: 0.75rem; color: var(--text-muted);">Sincronizada con Google Calendar</span>
+                <strong style="font-size: 0.85rem; display: block; color: #FFF;">Reserva en Tiempo Real</strong>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">Sincronizada con Supabase DB</span>
               </div>
             </div>
 
-            <div class="floating-badge-2">
-              <span>📱 Pase Digital RSVP con QR</span>
+            <div class="floating-badge-2" onclick="openInvitationModalBySlug('boda-carlos-sofia')" style="cursor: pointer;">
+              <span>📱 Probar Pase RSVP con QR ➔</span>
             </div>
           </div>
         </div>
@@ -239,7 +251,7 @@
         </div>
 
         <div id="drinksGridContainer" class="cards-grid">
-          <!-- Rendered dynamically by app.js -->
+          <!-- Rendered dynamically by app.js from Supabase / DB -->
         </div>
       </div>
     </section>
@@ -248,9 +260,21 @@
     <section id="invitaciones" class="section invitation-section">
       <div class="container">
         <div class="section-header">
-          <span class="section-subtitle">NUEVA LÍNEA DE NEGOCIO PARA TU CLIENTE</span>
+          <span class="section-subtitle">LÍNEA DE NEGOCIO PROFESIONAL</span>
           <h2 class="section-title">Invitaciones Digitales e Interactivas</h2>
-          <p class="section-desc">Ofrece a tus clientes un catálogo de invitaciones web con confirmación de asistencia RSVP, mapa de Cochabamba y pases con código QR.</p>
+          <p class="section-desc">Páginas web personalizadas para cada evento con confirmación RSVP en vivo, mapa de Cochabamba y pases individuales con código QR.</p>
+        </div>
+
+        <!-- Banner Crear Invitación -->
+        <div class="inv-builder-promo-banner">
+          <div class="promo-content">
+            <span class="badge-tag" style="background: var(--accent-gold); color: #000; font-weight: bold;">NUEVO MÓDULO INTERACTIVO</span>
+            <h3 style="font-size: 1.6rem; color: #FFF; margin: 0.5rem 0;">¿Quieres diseñar la invitación para tu evento?</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 600px;">Personaliza el diseño, tema de colores, cuenta regresiva y formulario RSVP con pase QR en segundos.</p>
+          </div>
+          <button class="btn btn-primary" onclick="openInvitationBuilderModal()">
+            ✨ Diseñar Mi Invitación Ahora
+          </button>
         </div>
 
         <!-- Invitation Packages -->
@@ -274,8 +298,8 @@
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">Página web exclusiva del evento con formulario de asistencia y pase QR.</p>
             <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent-gold); margin-bottom: 1.25rem;">Bs. 300</div>
             <ul class="pkg-includes-list" style="margin-bottom: 1.5rem;">
-              <li>✓ Web propia (ej: boda-carlos-sofia.bo)</li>
-              <li>✓ Formulario de confirmación de asistencia (RSVP)</li>
+              <li>✓ Enlace web propio compartible por WhatsApp</li>
+              <li>✓ Formulario de confirmación de asistencia (RSVP en vivo)</li>
               <li>✓ Cronómetro regresivo y pase individual por QR</li>
               <li>✓ Ubicación en Google Maps / Waze Cochabamba</li>
             </ul>
@@ -300,60 +324,8 @@
         <!-- Sample Showcase Cards with Live Previews -->
         <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.6rem;">📱 Demostración Interactiva de Diseños</h3>
         
-        <div class="inv-samples-grid">
-          <!-- Boda Sample -->
-          <div class="sample-card">
-            <div class="sample-img-box">
-              <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80" alt="Boda Elegante">
-              <span class="sample-overlay-tag">BODA DE GALA</span>
-            </div>
-            <div class="sample-content">
-              <h4 class="sample-title">Boda Carlos & Sofía</h4>
-              <div class="sample-meta">
-                <span>📍 Centro de Eventos El Bosque, Tiquipaya</span>
-                <span>📅 15 de Octubre, 2026</span>
-              </div>
-              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-boda" style="width: 100%;">
-                👁️ Probar Invitación Web (Demo)
-              </button>
-            </div>
-          </div>
-
-          <!-- 15 Años Sample -->
-          <div class="sample-card">
-            <div class="sample-img-box">
-              <img src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=600&q=80" alt="15 Años">
-              <span class="sample-overlay-tag" style="color: #EC4899;">15 AÑOS</span>
-            </div>
-            <div class="sample-content">
-              <h4 class="sample-title">Mis 15 Años - Valeria Alexandra</h4>
-              <div class="sample-meta">
-                <span>📍 Salón de Eventos Pairumani</span>
-                <span>📅 28 de Noviembre, 2026</span>
-              </div>
-              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-15" style="width: 100%;">
-                👁️ Probar Invitación Web (Demo)
-              </button>
-            </div>
-          </div>
-
-          <!-- Corporativo Sample -->
-          <div class="sample-card">
-            <div class="sample-img-box">
-              <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80" alt="Gala Corporativa">
-              <span class="sample-overlay-tag" style="color: #3B82F6;">CORPORATIVO</span>
-            </div>
-            <div class="sample-content">
-              <h4 class="sample-title">Gala Aniversario Banco BNB</h4>
-              <div class="sample-meta">
-                <span>📍 Hotel Cochabamba - La Recoleta</span>
-                <span>📅 12 de Diciembre, 2026</span>
-              </div>
-              <button class="btn btn-secondary btn-sm btn-preview-invitation" data-sample-id="sample-corp" style="width: 100%;">
-                👁️ Probar Invitación Web (Demo)
-              </button>
-            </div>
-          </div>
+        <div id="invitationSamplesGrid" class="inv-samples-grid">
+          <!-- Rendered dynamically by invitations.js from Supabase / DB -->
         </div>
       </div>
     </section>
@@ -391,12 +363,17 @@
       <div class="admin-header-bar">
         <div class="admin-title-group">
           <h1>⚙️ Panel de Control <span class="text-gold">Bartender Pro</span></h1>
-          <p style="color: var(--text-muted); font-size: 0.9rem;">Gestión centralizada de reservas, comprobantes por QR Simple e invitaciones digitales.</p>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Gestión centralizada en tiempo real conectada a PostgreSQL en Supabase.</p>
         </div>
 
-        <div class="sync-badge">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-          Google Calendar Sincronizado
+        <div class="admin-header-actions">
+          <button class="btn btn-outline btn-sm" onclick="openSupabaseConfigModal()">
+            ⚡ Configurar Supabase
+          </button>
+          <div class="sync-badge">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            Google Calendar Sync
+          </div>
         </div>
       </div>
 
@@ -427,55 +404,97 @@
         </div>
 
         <div class="metric-card">
-          <div class="metric-icon">💌</div>
+          <div class="metric-icon">✅</div>
           <div class="metric-data">
-            <span class="metric-val">8</span>
-            <span class="metric-lbl">Invitaciones Digitales Activas</span>
+            <span id="adminConfirmedCount" class="metric-val">0</span>
+            <span class="metric-lbl">Eventos Confirmados</span>
           </div>
         </div>
       </div>
 
-      <!-- Bookings Table Container -->
-      <div class="admin-table-container">
-        <div class="table-top-bar">
-          <h3 class="table-title">Solicitudes de Reservas & Eventos</h3>
-          <div class="table-filter-group">
-            <button class="filter-btn-sm active">Todas</button>
-            <button class="filter-btn-sm">En Revisión</button>
-            <button class="filter-btn-sm">Confirmadas</button>
-          </div>
-        </div>
+      <!-- Admin Sub-Navigation Tabs -->
+      <div class="admin-tabs-bar">
+        <button class="admin-nav-tab active" data-tab="bookings">📋 Reservas & Pagos QR</button>
+        <button class="admin-nav-tab" data-tab="invitations">💌 Gestión de Invitaciones & RSVP</button>
+        <button class="admin-nav-tab" data-tab="checkin">🚪 Control de Acceso / Validador QR</button>
+      </div>
 
-        <div class="responsive-table">
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>ID Reserva</th>
-                <th>Cliente / Anfitrión</th>
-                <th>Evento & Ubicación</th>
-                <th>Fecha Evento</th>
-                <th>Monto Total</th>
-                <th>Estado Pago</th>
-                <th>Google Calendar</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="adminBookingsTableBody">
-              <!-- Rendered dynamically by admin.js -->
-            </tbody>
-          </table>
+      <!-- TAB 1: RESERVAS & PAGOS QR -->
+      <div id="adminView_bookings" class="admin-tab-view active">
+        <div class="admin-table-container">
+          <div class="table-top-bar">
+            <h3 class="table-title">Solicitudes de Reservas & Eventos</h3>
+            <div class="table-filter-group">
+              <button class="filter-btn-sm active" onclick="filterAdminBookings('all', this)">Todas</button>
+              <button class="filter-btn-sm" onclick="filterAdminBookings('revision', this)">En Revisión</button>
+              <button class="filter-btn-sm" onclick="filterAdminBookings('confirmado', this)">Confirmadas</button>
+              <button class="filter-btn-sm" onclick="filterAdminBookings('pendiente', this)">Pendientes</button>
+            </div>
+          </div>
+
+          <div class="responsive-table">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>ID Reserva</th>
+                  <th>Cliente / Anfitrión</th>
+                  <th>Evento & Ubicación</th>
+                  <th>Fecha Evento</th>
+                  <th>Monto Total</th>
+                  <th>Estado Pago</th>
+                  <th>Google Calendar</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsTableBody">
+                <!-- Rendered dynamically by admin.js from Supabase -->
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      <div style="background: rgba(212,175,55,0.05); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: var(--radius-md); text-align: center;">
-        <h4 style="color: var(--accent-gold); margin-bottom: 0.5rem;">💡 Muestra de Funcionalidad para el Cliente</h4>
-        <p style="font-size: 0.85rem; color: var(--text-muted);">Desde este panel el dueño del servicio de bartender verifica comprobantes subidos por QR Simple, aprueba solicitudes y sincroniza su agenda automáticamente con Google Calendar.</p>
+      <!-- TAB 2: INVITACIONES & LISTA RSVP -->
+      <div id="adminView_invitations" class="admin-tab-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.3rem; color: #FFF;">Invitaciones Digitales Creadas</h3>
+          <button class="btn btn-primary btn-sm" onclick="openInvitationBuilderModal()">
+            ✨ + Crear Nueva Invitación
+          </button>
+        </div>
+        <div id="adminInvitationsGrid" class="cards-grid">
+          <!-- Rendered dynamically by admin.js -->
+        </div>
+      </div>
+
+      <!-- TAB 3: CONTROL DE ACCESO / VALIDADOR QR EN PUERTA -->
+      <div id="adminView_checkin" class="admin-tab-view" style="display: none;">
+        <div class="admin-checkin-card">
+          <div style="text-align: center; max-width: 500px; margin: 0 auto;">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎟️</div>
+            <h2 style="font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.5rem;">Validador de Pases QR en Puerta</h2>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+              Escanea el código QR del invitado con una cámara o ingresa su código de pase para marcar su ingreso en Supabase en tiempo real.
+            </p>
+
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+              <input type="text" id="qrScannerInput" class="rsvp-input" placeholder="Ej: QR-BODA-MERCADO-881" style="text-align: center; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">
+              <button class="btn btn-primary" onclick="validateGuestQrCode()">
+                ✓ Validar Ingreso
+              </button>
+            </div>
+
+            <div id="qrScannerResultBox" style="display: none; margin-top: 1rem;">
+              <!-- Result box dynamically populated -->
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 
-  <!-- ==================== MODAL DE RESERVA (WIZARD) ==================== -->
+  <!-- ==================== MODAL DE RESERVA (WIZARD 5 PASOS) ==================== -->
   <div id="bookingModalOverlay" class="modal-overlay">
     <div class="modal-container" style="max-width: 680px;">
       <div class="modal-header">
@@ -488,10 +507,147 @@
     </div>
   </div>
 
-  <!-- ==================== MODAL PREVISUALIZADOR DE INVITACIONES ==================== -->
+  <!-- ==================== MODAL PREVISUALIZADOR DE INVITACIONES (SMARTPHONE) ==================== -->
   <div id="invitationModalOverlay" class="modal-overlay">
     <div id="invitationModalContainer" class="modal-container invitation-preview-container">
       <!-- Rendered dynamically by invitations.js -->
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CREADOR / CONSTRUCTOR DE INVITACIONES ==================== -->
+  <div id="invitationBuilderOverlay" class="modal-overlay">
+    <div class="modal-container" style="max-width: 960px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">✨</span>
+          <h3 style="color: var(--accent-gold); font-size: 1.25rem;">Constructor de Invitaciones Digitales</h3>
+        </div>
+        <button class="modal-close" onclick="closeInvitationBuilderModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div class="builder-grid">
+          <!-- Left: Inputs Form -->
+          <div class="builder-form-pane">
+            <h4 style="font-size: 1.05rem; margin-bottom: 1rem; color: #FFF;">1. Información del Evento</h4>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div>
+                <label class="builder-label">Tipo de Evento</label>
+                <select id="builderEventType" class="rsvp-input" onchange="updateBuilderLivePreview()">
+                  <option value="boda">Boda de Gala</option>
+                  <option value="quince">Mis 15 Años</option>
+                  <option value="corporativo">Cena / Gala Corporativa</option>
+                  <option value="cumpleanos">Cumpleaños VIP</option>
+                  <option value="graduacion">Graduación</option>
+                </select>
+              </div>
+              <div>
+                <label class="builder-label">Tema Visual</label>
+                <select id="builderBgStyle" class="rsvp-input" onchange="updateBuilderLivePreview()">
+                  <option value="boda-theme">Dorado Luxury (Bodas)</option>
+                  <option value="quince-theme">Rosa Neón (15 Años)</option>
+                  <option value="corp-theme">Azul Ejecutivo (Corporativo)</option>
+                  <option value="emerald-theme">Verde Esmeralda</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-bottom: 0.75rem;">
+              <label class="builder-label">Título de la Invitación *</label>
+              <input type="text" id="builderTitle" class="rsvp-input" value="Boda Carlos & Sofía" oninput="updateBuilderLivePreview()">
+            </div>
+
+            <div style="margin-bottom: 0.75rem;">
+              <label class="builder-label">Nombre del Anfitrión / Novios *</label>
+              <input type="text" id="builderHost" class="rsvp-input" value="Carlos & Sofía" oninput="updateBuilderLivePreview()">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div>
+                <label class="builder-label">Fecha del Evento *</label>
+                <input type="date" id="builderDate" class="rsvp-input" value="2026-10-15" onchange="updateBuilderLivePreview()">
+              </div>
+              <div>
+                <label class="builder-label">Hora del Evento</label>
+                <input type="text" id="builderTime" class="rsvp-input" value="17:00 HRS" oninput="updateBuilderLivePreview()">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 0.75rem;">
+              <label class="builder-label">Salón o Lugar en Cochabamba *</label>
+              <input type="text" id="builderVenue" class="rsvp-input" value="Centro de Eventos El Bosque, Tiquipaya" oninput="updateBuilderLivePreview()">
+            </div>
+
+            <div style="margin-bottom: 0.75rem;">
+              <label class="builder-label">Código de Vestimenta</label>
+              <input type="text" id="builderDressCode" class="rsvp-input" value="Rigurosa Gala / Smoking" oninput="updateBuilderLivePreview()">
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+              <label class="builder-label">Mensaje o Dedicatoria para los Invitados</label>
+              <textarea id="builderMessage" class="rsvp-input" rows="2" oninput="updateBuilderLivePreview()">Nos llena de emoción compartir el día más importante de nuestras vidas contigo. Por favor confirma tu asistencia.</textarea>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="saveAndPublishInvitation()">
+              🚀 Publicar y Generar Enlace Compartible
+            </button>
+          </div>
+
+          <!-- Right: Live Smartphone Mockup Preview -->
+          <div class="builder-preview-pane">
+            <div style="text-align: center; font-size: 0.8rem; color: var(--text-gold); font-weight: bold; margin-bottom: 0.5rem;">
+              📱 VISTA PREVIA EN VIVO
+            </div>
+            <div id="builderPhonePreview" class="inv-phone-screen boda-theme" style="max-height: 480px; overflow-y: auto; transform: scale(0.95); transform-origin: top center;">
+              <!-- Live preview updated dynamically -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL CONFIGURACIÓN SUPABASE ==================== -->
+  <div id="supabaseConfigModal" class="modal-overlay">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">⚡</span>
+          <h3 style="color: var(--accent-gold); font-size: 1.2rem;">Conexión a Base de Datos Supabase</h3>
+        </div>
+        <button class="modal-close" onclick="closeSupabaseConfigModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Conecta la aplicación a tu proyecto de Supabase para almacenar reservas, confirmaciones RSVP en vivo e invitaciones en PostgreSQL.
+        </p>
+
+        <div style="margin-bottom: 1rem;">
+          <label class="builder-label">Project URL de Supabase</label>
+          <input type="text" id="supabaseUrlInput" class="rsvp-input" value="https://rifhvogyfuhljfvgonqx.supabase.co">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label class="builder-label">Anon Key Pública (API Key)</label>
+          <input type="password" id="supabaseKeyInput" class="rsvp-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+          <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">
+            Obtén tu clave en: Supabase Dashboard ➔ Project Settings ➔ API ➔ Project API Keys (anon/public).
+          </span>
+        </div>
+
+        <div style="background: rgba(212,175,55,0.08); border: 1px solid var(--glass-border); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.8rem; color: #E2E8F0;">
+          💡 <strong>Recordatorio:</strong> Recuerda haber ejecutado previamente el script <code>supabase_schema.sql</code> en el SQL Editor de tu proyecto Supabase.
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="handleSaveSupabaseConfig()">
+            💾 Guardar y Conectar
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="closeSupabaseConfigModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -504,14 +660,15 @@
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
         Paseo El Prado - Av. Ballivián #642, Cochabamba, Bolivia • WhatsApp: +591 797 12345
       </p>
-      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.3);">
-        © 2026 Bartender Pro CBBA - Maqueta Web Interactiva de Frontend para Presentación Comercial.
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+        © 2026 Bartender Pro CBBA - Plataforma Web de Reservas & Invitaciones Digitales con Base de Datos Supabase.
       </div>
     </div>
   </footer>
 
   <!-- Scripts -->
   <script src="js/data.js"></script>
+  <script src="js/supabase-client.js"></script>
   <script src="js/invitations.js"></script>
   <script src="js/booking.js"></script>
   <script src="js/admin.js"></script>

@@ -737,8 +737,131 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--accent-gold);
 }
 
-.modal-body {
-  padding: 2rem;
+/* Nav Actions Group */
+.nav-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Supabase Connection Status Pill */
+.supabase-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.supabase-status-pill:hover {
+  background: rgba(212, 175, 55, 0.15);
+  border-color: var(--accent-gold);
+}
+
+.supabase-status-pill.connected {
+  border-color: #10B981;
+  color: #10B981;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.live {
+  background: #10B981;
+  box-shadow: 0 0 10px #10B981;
+  animation: pulseGreen 2s infinite;
+}
+
+.status-dot.offline {
+  background: #F59E0B;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Invitation Builder Promo Banner */
+.inv-builder-promo-banner {
+  background: linear-gradient(135deg, rgba(25, 55, 109, 0.6) 0%, rgba(11, 19, 43, 0.9) 100%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+  box-shadow: var(--shadow-gold);
+}
+
+.promo-content {
+  flex: 1;
+}
+
+/* Builder Modal Form & Preview Grid */
+.builder-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 2rem;
+}
+
+.builder-form-pane {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.builder-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+.builder-preview-pane {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* Floating Action Button inside phone screen */
+.inv-floating-btn {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid var(--glass-border);
+  color: #FFF;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: var(--transition-fast);
+}
+
+.inv-floating-btn:hover {
+  background: var(--accent-gold);
+  color: var(--bg-dark);
 }
 
 /* Toast Notifications */
@@ -785,6 +908,13 @@ h1, h2, h3, h4, h5, h6 {
   .floating-glass-badge, .floating-badge-2 {
     display: none;
   }
+  .inv-builder-promo-banner {
+    flex-direction: column;
+    text-align: center;
+  }
+  .builder-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -794,4 +924,10 @@ h1, h2, h3, h4, h5, h6 {
   .hero-title {
     font-size: 2.2rem;
   }
+  .navbar .container {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
 }
+
