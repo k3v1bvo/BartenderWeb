@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bartender Pro Cochabamba - Coctelería de Autor & Invitaciones Digitales</title>
+  <title>Bartender Pro Cochabamba - Coctelería de Autor & Plataforma de Invitaciones Digitales</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
-  <!-- External CDNs for Full Functionality -->
+  <!-- External CDNs -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -37,25 +37,24 @@
         <li><a href="#paquetes" class="nav-link active">Paquetes</a></li>
         <li><a href="#menu" class="nav-link">Menú de Cocteles</a></li>
         <li><a href="#invitaciones" class="nav-link">Invitaciones Digitales</a></li>
-        <li><a href="#galeria" class="nav-link">Galería de Eventos</a></li>
+        <li><a href="#galeria" class="nav-link">Galería</a></li>
       </ul>
 
-      <!-- Supabase Connection Badge & Mode Switcher -->
+      <!-- Nav Actions & Access Buttons -->
       <div class="nav-actions-group">
-        <button id="supabaseStatusBadge" class="supabase-status-pill offline" onclick="openSupabaseConfigModal()" title="Configuración de Base de Datos Supabase">
-          <span class="status-dot offline"></span>
-          <span>⚙️ Conectar Supabase</span>
+        <button id="supabaseStatusBadge" class="supabase-status-pill connected" onclick="openSupabaseConfigModal()" title="Configuración de Base de Datos Supabase">
+          <span class="status-dot live"></span>
+          <span>🟢 Supabase en Vivo</span>
         </button>
 
-        <div class="mode-switcher">
-          <button id="modeClientBtn" class="mode-btn active">👁️ Vista Cliente</button>
-          <button id="modeAdminBtn" class="mode-btn">⚙️ Panel Admin</button>
-        </div>
+        <button id="navAdminPortalBtn" class="btn btn-outline btn-sm" onclick="toggleAdminPortal()">
+          ⚙️ Panel Admin
+        </button>
       </div>
     </div>
   </nav>
 
-  <!-- ==================== VISTA CLIENTE / USUARIO ==================== -->
+  <!-- ==================== VISTA CLIENTE / COMERCIAL ==================== -->
   <div id="clientViewSection">
     
     <!-- HERO SECTION -->
@@ -89,7 +88,7 @@
                 🍹 Reservar Mi Evento Ahora
               </button>
               <button class="btn btn-secondary" onclick="openInvitationBuilderModal()">
-                ✨ Crear Mi Invitación Digital
+                ✨ Diseñar Mi Invitación Digital
               </button>
             </div>
 
@@ -150,7 +149,7 @@
           <p class="section-desc">Selecciona el nivel de experiencia ideal según el tamaño y estilo de tu evento en Cochabamba.</p>
         </div>
 
-        <div class="cards-grid">
+        <div id="packagesCatalogContainer" class="cards-grid">
           <!-- Paquete Básico -->
           <div class="pkg-card">
             <span class="pkg-badge" style="background: rgba(255,255,255,0.15); color: #fff;">Reuniones Íntimas</span>
@@ -256,7 +255,7 @@
       </div>
     </section>
 
-    <!-- SECTION 4: INVITACIONES DIGITALES (LA NUEVA LÍNEA DE NEGOCIO) -->
+    <!-- SECTION 4: INVITACIONES DIGITALES -->
     <section id="invitaciones" class="section invitation-section">
       <div class="container">
         <div class="section-header">
@@ -268,7 +267,7 @@
         <!-- Banner Crear Invitación -->
         <div class="inv-builder-promo-banner">
           <div class="promo-content">
-            <span class="badge-tag" style="background: var(--accent-gold); color: #000; font-weight: bold;">NUEVO MÓDULO INTERACTIVO</span>
+            <span class="badge-tag" style="background: var(--accent-gold); color: #000; font-weight: bold;">ESTUDIO DE INVITACIONES</span>
             <h3 style="font-size: 1.6rem; color: #FFF; margin: 0.5rem 0;">¿Quieres diseñar la invitación para tu evento?</h3>
             <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 600px;">Personaliza el diseño, tema de colores, cuenta regresiva y formulario RSVP con pase QR en segundos.</p>
           </div>
@@ -322,7 +321,7 @@
         </div>
 
         <!-- Sample Showcase Cards with Live Previews -->
-        <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.6rem;">📱 Demostración Interactiva de Diseños</h3>
+        <h3 style="text-align: center; margin-bottom: 2rem; font-size: 1.6rem;">📱 Catálogo de Diseños Activos</h3>
         
         <div id="invitationSamplesGrid" class="inv-samples-grid">
           <!-- Rendered dynamically by invitations.js from Supabase / DB -->
@@ -355,7 +354,7 @@
 
   </div> <!-- FIN VISTA CLIENTE -->
 
-  <!-- ==================== PANEL DE ADMINISTRACIÓN (MODO BARTENDER) ==================== -->
+  <!-- ==================== PANEL DE ADMINISTRACIÓN (SUITE COMPLETA CRUD) ==================== -->
   <div id="adminDashboardSection" class="admin-dashboard">
     <div class="container">
       
@@ -367,8 +366,11 @@
         </div>
 
         <div class="admin-header-actions">
-          <button class="btn btn-outline btn-sm" onclick="openSupabaseConfigModal()">
-            ⚡ Configurar Supabase
+          <button class="btn btn-outline btn-sm" onclick="toggleAdminPortal()">
+            👁️ Volver a Vista Cliente
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="openSupabaseConfigModal()">
+            ⚡ Estado Supabase
           </button>
           <div class="sync-badge">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -414,13 +416,15 @@
 
       <!-- Admin Sub-Navigation Tabs -->
       <div class="admin-tabs-bar">
-        <button class="admin-nav-tab active" data-tab="bookings">📋 Reservas & Pagos QR</button>
-        <button class="admin-nav-tab" data-tab="invitations">💌 Gestión de Invitaciones & RSVP</button>
+        <button class="admin-nav-tab active" data-tab="dashboard">📋 Reservas & Pagos QR</button>
+        <button class="admin-nav-tab" data-tab="drinks">🍸 Menú de Cócteles (CRUD)</button>
+        <button class="admin-nav-tab" data-tab="packages">📦 Paquetes de Barra</button>
+        <button class="admin-nav-tab" data-tab="invitations">💌 Invitaciones & Lista RSVP</button>
         <button class="admin-nav-tab" data-tab="checkin">🚪 Control de Acceso / Validador QR</button>
       </div>
 
       <!-- TAB 1: RESERVAS & PAGOS QR -->
-      <div id="adminView_bookings" class="admin-tab-view active">
+      <div id="adminView_dashboard" class="admin-tab-view active">
         <div class="admin-table-container">
           <div class="table-top-bar">
             <h3 class="table-title">Solicitudes de Reservas & Eventos</h3>
@@ -454,10 +458,57 @@
         </div>
       </div>
 
-      <!-- TAB 2: INVITACIONES & LISTA RSVP -->
+      <!-- TAB 2: GESTIÓN CRUD DE CÓCTELES / MENÚ -->
+      <div id="adminView_drinks" class="admin-tab-view" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+          <div>
+            <h3 style="font-size: 1.3rem; color: #FFF;">Gestión de Carta de Cócteles</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Crea, edita o elimina cócteles de autor y clásicos en la base de datos.</p>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openCreateDrinkModal()">
+            🍸 + Agregar Nuevo Cóctel
+          </button>
+        </div>
+
+        <div class="admin-table-container">
+          <div class="responsive-table">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Foto</th>
+                  <th>Nombre & Descripción</th>
+                  <th>Categoría</th>
+                  <th>Alcohol</th>
+                  <th>Flair</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="adminDrinksTableBody">
+                <!-- Rendered dynamically by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: GESTIÓN DE PAQUETES DE BARRA -->
+      <div id="adminView_packages" class="admin-tab-view" style="display: none;">
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.3rem; color: #FFF;">Paquetes de Barra Libre</h3>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">Modifica los precios en Bolivianos (Bs.), capacidad y características de los paquetes.</p>
+        </div>
+        <div id="adminPackagesGrid" class="cards-grid">
+          <!-- Rendered dynamically by admin.js -->
+        </div>
+      </div>
+
+      <!-- TAB 4: INVITACIONES & LISTA RSVP -->
       <div id="adminView_invitations" class="admin-tab-view" style="display: none;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-          <h3 style="font-size: 1.3rem; color: #FFF;">Invitaciones Digitales Creadas</h3>
+          <div>
+            <h3 style="font-size: 1.3rem; color: #FFF;">Invitaciones Digitales Creadas</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Administra los eventos, lista de confirmados (RSVP) y pases QR.</p>
+          </div>
           <button class="btn btn-primary btn-sm" onclick="openInvitationBuilderModal()">
             ✨ + Crear Nueva Invitación
           </button>
@@ -467,7 +518,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: CONTROL DE ACCESO / VALIDADOR QR EN PUERTA -->
+      <!-- TAB 5: CONTROL DE ACCESO / VALIDADOR QR EN PUERTA -->
       <div id="adminView_checkin" class="admin-tab-view" style="display: none;">
         <div class="admin-checkin-card">
           <div style="text-align: center; max-width: 500px; margin: 0 auto;">
@@ -607,6 +658,121 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL EDITOR DE CÓCTELES (CRUD) ==================== -->
+  <div id="drinkEditorModalOverlay" class="modal-overlay">
+    <div class="modal-container" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 id="drinkModalTitle" style="color: var(--accent-gold);">🍸 Administrar Cóctel</h3>
+        <button class="modal-close" onclick="closeDrinkEditorModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div style="margin-bottom: 0.75rem;">
+          <label class="builder-label">Nombre del Cóctel *</label>
+          <input type="text" id="drinkFormName" class="rsvp-input" placeholder="Ej: Tumbo Sour Royale">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <div>
+            <label class="builder-label">Categoría</label>
+            <select id="drinkFormCategory" class="rsvp-input">
+              <option value="autor">Coctelería de Autor</option>
+              <option value="tradicional">Tradicional Boliviano</option>
+              <option value="clasico">Clásico Internacional</option>
+              <option value="sin_alcohol">Mocktail (Sin Alcohol)</option>
+            </select>
+          </div>
+          <div>
+            <label class="builder-label">Tipo de Alcohol</label>
+            <select id="drinkFormAlcohol" class="rsvp-input">
+              <option value="Con Alcohol">Con Alcohol</option>
+              <option value="Sin Alcohol">Sin Alcohol (Mocktail)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 0.75rem;">
+          <label class="builder-label">Descripción & Ingredientes *</label>
+          <textarea id="drinkFormDesc" class="rsvp-input" rows="3" placeholder="Ingredientes, tipo de Singani, garnituras..."></textarea>
+        </div>
+
+        <div style="margin-bottom: 0.75rem;">
+          <label class="builder-label">URL de Imagen del Trago</label>
+          <input type="text" id="drinkFormImage" class="rsvp-input" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.25rem;">
+          <div>
+            <label class="builder-label">Estrellas Flair (1 a 5)</label>
+            <select id="drinkFormRating" class="rsvp-input">
+              <option value="5">★★★★★ (5 Estrellas)</option>
+              <option value="4">★★★★ (4 Estrellas)</option>
+              <option value="3">★★★ (3 Estrellas)</option>
+            </select>
+          </div>
+          <div>
+            <label class="builder-label">Etiqueta Especial (Badge)</label>
+            <input type="text" id="drinkFormBadge" class="rsvp-input" placeholder="Ej: Favorito Cochabambino">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="handleSaveDrink()">
+            💾 Guardar Cóctel en Supabase
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="closeDrinkEditorModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL EDITOR DE PAQUETES ==================== -->
+  <div id="packageEditorModalOverlay" class="modal-overlay">
+    <div class="modal-container" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3 style="color: var(--accent-gold);">📦 Modificar Paquete de Barra</h3>
+        <button class="modal-close" onclick="closePackageEditorModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div style="margin-bottom: 0.75rem;">
+          <label class="builder-label">Nombre del Paquete</label>
+          <input type="text" id="pkgFormName" class="rsvp-input">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+          <div>
+            <label class="builder-label">Precio en Bolivianos (Bs.) *</label>
+            <input type="number" id="pkgFormPrice" class="rsvp-input">
+          </div>
+          <div>
+            <label class="builder-label">Capacidad de Invitados</label>
+            <input type="text" id="pkgFormCapacity" class="rsvp-input">
+          </div>
+        </div>
+
+        <div style="margin-bottom: 0.75rem;">
+          <label class="builder-label">Etiqueta Destacada (Badge)</label>
+          <input type="text" id="pkgFormBadge" class="rsvp-input">
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label class="builder-label">Descripción del Servicio</label>
+          <textarea id="pkgFormDesc" class="rsvp-input" rows="3"></textarea>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-primary" style="flex: 1; justify-content: center;" onclick="handleSavePackage()">
+            💾 Guardar Cambios
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="closePackageEditorModal()">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== MODAL CONFIGURACIÓN SUPABASE ==================== -->
   <div id="supabaseConfigModal" class="modal-overlay">
     <div class="modal-container" style="max-width: 520px;">
@@ -630,9 +796,6 @@
         <div style="margin-bottom: 1.5rem;">
           <label class="builder-label">Anon Key Pública (API Key)</label>
           <input type="password" id="supabaseKeyInput" class="rsvp-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
-          <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block;">
-            Obtén tu clave en: Supabase Dashboard ➔ Project Settings ➔ API ➔ Project API Keys (anon/public).
-          </span>
         </div>
 
         <div style="background: rgba(212,175,55,0.08); border: 1px solid var(--glass-border); padding: 0.85rem; border-radius: var(--radius-sm); margin-bottom: 1.5rem; font-size: 0.8rem; color: #E2E8F0;">
@@ -660,8 +823,13 @@
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
         Paseo El Prado - Av. Ballivián #642, Cochabamba, Bolivia • WhatsApp: +591 797 12345
       </p>
-      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4);">
+      <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-bottom: 1rem;">
         © 2026 Bartender Pro CBBA - Plataforma Web de Reservas & Invitaciones Digitales con Base de Datos Supabase.
+      </div>
+      <div>
+        <button class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 4px 10px;" onclick="toggleAdminPortal()">
+          🔑 Acceso Dueño / Admin
+        </button>
       </div>
     </div>
   </footer>

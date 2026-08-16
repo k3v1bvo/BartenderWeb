@@ -1,15 +1,17 @@
-// js/admin.js - Módulo del Panel de Administración del Bartender / Dueño
+// js/admin.js - Panel de Administración Profesional y Suite de Gestión para Bartender Pro
 
 let currentAdminFilter = 'all';
-let currentAdminTab = 'bookings';
+let currentAdminTab = 'dashboard';
+let editingDrinkId = null;
+let editingPkgId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initAdminModule();
 });
 
 function initAdminModule() {
-    renderAdminDashboard();
     initAdminTabs();
+    renderAdminDashboard();
 }
 
 function initAdminTabs() {
@@ -32,8 +34,12 @@ function switchAdminTab(tabName) {
     const targetView = document.getElementById(`adminView_${tabName}`);
     if (targetView) targetView.style.display = 'block';
 
-    if (tabName === 'bookings') {
+    if (tabName === 'dashboard' || tabName === 'bookings') {
         renderAdminDashboard();
+    } else if (tabName === 'drinks') {
+        renderAdminDrinksTable();
+    } else if (tabName === 'packages') {
+        renderAdminPackagesTable();
     } else if (tabName === 'invitations') {
         renderAdminInvitationsList();
     } else if (tabName === 'checkin') {
@@ -41,11 +47,12 @@ function switchAdminTab(tabName) {
     }
 }
 
-// Renderizar Reservas y Métricas
+// ====================================================================
+// 1. DASHBOARD & RESERVAS
+// ====================================================================
+
 async function renderAdminDashboard() {
     const tableBody = document.getElementById('adminBookingsTableBody');
-    if (!tableBody) return;
-
     const bookings = await window.DB.getBookings();
 
     // Métricas en Bs. y Conteo
@@ -73,6 +80,8 @@ async function renderAdminDashboard() {
     if (reviewEl) reviewEl.innerText = reviewCount;
     if (confirmedEl) confirmedEl.innerText = confirmedCount;
 
+    if (!tableBody) return;
+
     // Filtrar tabla
     let filtered = bookings;
     if (currentAdminFilter !== 'all') {
@@ -82,7 +91,7 @@ async function renderAdminDashboard() {
     if (filtered.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
                     No hay solicitudes registradas con el filtro seleccionado.
                 </td>
             </tr>
@@ -222,7 +231,191 @@ function sendWhatsAppNotification(phone, clientName, bookingId) {
 }
 
 // ====================================================================
-// PESTAÑA: GESTIÓN DE INVITACIONES Y LISTA RSVP
+// 2. GESTIÓN CRUD DE CÓCTELES / MENÚ (ADMINISTRABLE 100%)
+// ====================================================================
+
+async function renderAdminDrinksTable() {
+    const container = document.getElementById('adminDrinksTableBody');
+    if (!container) return;
+
+    const drinks = await window.DB.getDrinks('all');
+
+    container.innerHTML = drinks.map(d => `
+        <tr>
+            <td>
+                <img src="${d.image}" alt="${d.name}" style="width: 48px; height: 48px; border-radius: var(--radius-sm); object-fit: cover; border: 1px solid var(--glass-border);">
+            </td>
+            <td>
+                <strong style="color: #FFF; display: block;">${d.name}</strong>
+                <span style="font-size: 0.8rem; color: var(--text-muted);">${d.description.substring(0, 50)}...</span>
+            </td>
+            <td>
+                <span class="badge-tag" style="font-size: 0.75rem;">${d.category.toUpperCase()}</span>
+            </td>
+            <td>
+                <span style="font-size: 0.8rem; color: var(--text-gold);">${d.alcohol}</span>
+            </td>
+            <td>
+                <span style="color: var(--accent-gold);">${'★'.repeat(d.flairRating)}</span>
+            </td>
+            <td>
+                <div class="action-btn-group">
+                    <button class="btn-icon" title="Editar Cóctel" onclick="openEditDrinkModal('${d.id}')">✏️</button>
+                    <button class="btn-icon" title="Eliminar Cóctel" onclick="handleDeleteDrink('${d.id}', '${d.name}')" style="color: #EF4444; border-color: #EF4444;">🗑️</button>
+                </div>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openCreateDrinkModal() {
+    editingDrinkId = null;
+    document.getElementById('drinkModalTitle').innerText = '🍸 Agregar Nuevo Cóctel al Menú';
+    document.getElementById('drinkFormName').value = '';
+    document.getElementById('drinkFormCategory').value = 'autor';
+    document.getElementById('drinkFormAlcohol').value = 'Con Alcohol';
+    document.getElementById('drinkFormDesc').value = '';
+    document.getElementById('drinkFormImage').value = 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80';
+    document.getElementById('drinkFormRating').value = '5';
+    document.getElementById('drinkFormBadge').value = '';
+    
+    document.getElementById('drinkEditorModalOverlay').classList.add('active');
+}
+
+async function openEditDrinkModal(drinkId) {
+    editingDrinkId = drinkId;
+    const drinks = await window.DB.getDrinks('all');
+    const drink = drinks.find(d => d.id === drinkId);
+    if (!drink) return;
+
+    document.getElementById('drinkModalTitle').innerText = `✏️ Editar Cóctel: ${drink.name}`;
+    document.getElementById('drinkFormName').value = drink.name;
+    document.getElementById('drinkFormCategory').value = drink.category;
+    document.getElementById('drinkFormAlcohol').value = drink.alcohol;
+    document.getElementById('drinkFormDesc').value = drink.description;
+    document.getElementById('drinkFormImage').value = drink.image;
+    document.getElementById('drinkFormRating').value = drink.flairRating;
+    document.getElementById('drinkFormBadge').value = drink.badge || '';
+
+    document.getElementById('drinkEditorModalOverlay').classList.add('active');
+}
+
+function closeDrinkEditorModal() {
+    document.getElementById('drinkEditorModalOverlay').classList.remove('active');
+}
+
+async function handleSaveDrink() {
+    const name = document.getElementById('drinkFormName').value.trim();
+    const category = document.getElementById('drinkFormCategory').value;
+    const alcohol = document.getElementById('drinkFormAlcohol').value;
+    const description = document.getElementById('drinkFormDesc').value.trim();
+    const image = document.getElementById('drinkFormImage').value.trim();
+    const flairRating = parseInt(document.getElementById('drinkFormRating').value) || 5;
+    const badge = document.getElementById('drinkFormBadge').value.trim();
+
+    if (!name || !description) {
+        showToast('⚠️ Ingresa al menos el nombre y la descripción del cóctel.');
+        return;
+    }
+
+    const drinkData = {
+        name, category, alcohol, description, image, flairRating, badge, popular: true
+    };
+
+    if (editingDrinkId) {
+        showToast('⏳ Actualizando cóctel en Supabase...');
+        await window.DB.updateDrink(editingDrinkId, drinkData);
+        showToast(`✅ Cóctel "${name}" actualizado con éxito.`);
+    } else {
+        showToast('⏳ Guardando nuevo cóctel en Supabase...');
+        await window.DB.createDrink(drinkData);
+        showToast(`🎉 ¡Cóctel "${name}" agregado al menú!`);
+    }
+
+    closeDrinkEditorModal();
+    renderAdminDrinksTable();
+    if (window.renderDrinksCatalog) window.renderDrinksCatalog('all');
+}
+
+async function handleDeleteDrink(drinkId, drinkName) {
+    if (confirm(`¿Eliminar el cóctel "${drinkName}" del menú?`)) {
+        showToast(`⏳ Eliminando ${drinkName}...`);
+        await window.DB.deleteDrink(drinkId);
+        renderAdminDrinksTable();
+        if (window.renderDrinksCatalog) window.renderDrinksCatalog('all');
+        showToast(`🗑️ Cóctel "${drinkName}" eliminado.`);
+    }
+}
+
+// ====================================================================
+// 3. GESTIÓN DE PAQUETES (EDITABLE POR ADMIN)
+// ====================================================================
+
+async function renderAdminPackagesTable() {
+    const container = document.getElementById('adminPackagesGrid');
+    if (!container) return;
+
+    const packages = await window.DB.getPackages();
+
+    container.innerHTML = packages.map(p => `
+        <div class="pkg-card" style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <h3 style="color: var(--accent-gold); font-size: 1.25rem;">${p.name}</h3>
+                <span class="badge-tag">${p.badge || 'Estándar'}</span>
+            </div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #FFF; margin-bottom: 0.5rem;">
+                Bs. ${p.price}
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">${p.description}</p>
+            <p style="font-size: 0.8rem; color: var(--text-gold); margin-bottom: 1rem;">👥 Capacidad: ${p.capacity}</p>
+            <button class="btn btn-primary btn-sm" style="width: 100%; justify-content: center;" onclick="openEditPackageModal('${p.id}')">
+                ✏️ Modificar Precio & Detalles
+            </button>
+        </div>
+    `).join('');
+}
+
+async function openEditPackageModal(pkgId) {
+    editingPkgId = pkgId;
+    const pkgs = await window.DB.getPackages();
+    const pkg = pkgs.find(p => p.id === pkgId);
+    if (!pkg) return;
+
+    document.getElementById('pkgFormName').value = pkg.name;
+    document.getElementById('pkgFormPrice').value = pkg.price;
+    document.getElementById('pkgFormCapacity').value = pkg.capacity;
+    document.getElementById('pkgFormBadge').value = pkg.badge || '';
+    document.getElementById('pkgFormDesc').value = pkg.description;
+
+    document.getElementById('packageEditorModalOverlay').classList.add('active');
+}
+
+function closePackageEditorModal() {
+    document.getElementById('packageEditorModalOverlay').classList.remove('active');
+}
+
+async function handleSavePackage() {
+    const name = document.getElementById('pkgFormName').value.trim();
+    const price = parseFloat(document.getElementById('pkgFormPrice').value);
+    const capacity = document.getElementById('pkgFormCapacity').value.trim();
+    const badge = document.getElementById('pkgFormBadge').value.trim();
+    const description = document.getElementById('pkgFormDesc').value.trim();
+
+    if (!name || isNaN(price)) {
+        showToast('⚠️ Ingresa un nombre y precio válidos.');
+        return;
+    }
+
+    showToast('⏳ Actualizando paquete en Supabase...');
+    await window.DB.updatePackage(editingPkgId, { name, price, capacity, badge, description });
+
+    closePackageEditorModal();
+    renderAdminPackagesTable();
+    showToast(`✅ Paquete "${name}" actualizado con éxito.`);
+}
+
+// ====================================================================
+// 4. GESTIÓN DE INVITACIONES DIGITALES & LISTA RSVP
 // ====================================================================
 
 async function renderAdminInvitationsList() {
@@ -232,7 +425,7 @@ async function renderAdminInvitationsList() {
     const invitations = await window.DB.getInvitations();
 
     container.innerHTML = invitations.map(inv => `
-        <div class="inv-pkg-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="inv-pkg-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--glass-border);">
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                     <span class="badge-tag" style="background: rgba(212,175,55,0.2); color: var(--accent-gold);">${inv.type.toUpperCase()}</span>
@@ -242,20 +435,39 @@ async function renderAdminInvitationsList() {
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">
                     📍 ${inv.location} • 📅 ${inv.date}
                 </p>
-                <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem;">
-                    <span>👥 <strong>Invitados Confirmados:</strong> ${inv.confirmedCount || 0}</span>
+                <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.85rem; display: flex; justify-content: space-between;">
+                    <span>👥 <strong>Confirmados:</strong> ${inv.confirmedCount || 0}</span>
+                    <span>🎟️ <strong>Total PAX:</strong> ${inv.totalPax || inv.confirmedCount || 0}</span>
                 </div>
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="openInvitationModalBySlug('${inv.slug || inv.id}')">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <button class="btn btn-outline btn-sm" onclick="openInvitationModalBySlug('${inv.slug || inv.id}')">
                     👁️ Ver Web
                 </button>
-                <button class="btn btn-primary btn-sm" onclick="viewGuestsForInvitation('${inv.id}', '${inv.title}')" title="Ver Lista de Asistencia">
+                <button class="btn btn-primary btn-sm" onclick="viewGuestsForInvitation('${inv.id}', '${inv.title}')">
                     📋 Lista RSVP
+                </button>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="shareInvitationWhatsApp('${inv.slug || inv.id}', '${inv.title}')">
+                    📲 Enviar WhatsApp
+                </button>
+                <button class="btn btn-outline btn-sm" style="color: #EF4444; border-color: #EF4444;" title="Eliminar Invitación" onclick="handleDeleteInvitation('${inv.id}', '${inv.title}')">
+                    🗑️
                 </button>
             </div>
         </div>
     `).join('');
+}
+
+async function handleDeleteInvitation(invId, title) {
+    if (confirm(`¿Estás seguro de eliminar la invitación "${title}"? Se borrarán también los registros de invitados confirmados.`)) {
+        showToast('⏳ Eliminando invitación en Supabase...');
+        await window.DB.deleteInvitation(invId);
+        renderAdminInvitationsList();
+        if (window.renderInvitationShowcase) window.renderInvitationShowcase();
+        showToast(`🗑️ Invitación "${title}" eliminada.`);
+    }
 }
 
 async function viewGuestsForInvitation(invId, title) {
@@ -265,7 +477,7 @@ async function viewGuestsForInvitation(invId, title) {
     
     if (modalOverlay && modalContainer) {
         modalContainer.innerHTML = `
-            <div style="padding: 2rem; background: #0B132B; border-radius: var(--radius-lg); max-width: 580px; margin: 0 auto; border: 1px solid var(--glass-border);">
+            <div style="padding: 2rem; background: #0B132B; border-radius: var(--radius-lg); max-width: 650px; margin: 0 auto; border: 1px solid var(--glass-border);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                     <div>
                         <h3 style="color: var(--accent-gold); font-size: 1.25rem;">Lista de Confirmados (RSVP)</h3>
@@ -281,10 +493,11 @@ async function viewGuestsForInvitation(invId, title) {
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
                             <thead>
                                 <tr style="border-bottom: 1px solid var(--glass-border-subtle); color: var(--text-gold); text-align: left;">
-                                    <th style="padding: 6px;">Invitado</th>
-                                    <th style="padding: 6px;">PAX</th>
-                                    <th style="padding: 6px;">Mesa</th>
-                                    <th style="padding: 6px;">Ingreso</th>
+                                    <th style="padding: 8px 6px;">Invitado</th>
+                                    <th style="padding: 8px 6px;">PAX</th>
+                                    <th style="padding: 8px 6px;">Mesa</th>
+                                    <th style="padding: 8px 6px;">Token QR</th>
+                                    <th style="padding: 8px 6px;">Ingreso</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -292,13 +505,14 @@ async function viewGuestsForInvitation(invId, title) {
                                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
                                         <td style="padding: 8px 6px;">
                                             <strong style="color: #FFF; display: block;">${g.guest_name || g.name}</strong>
-                                            <span style="font-size: 0.75rem; color: var(--text-muted);">${g.phone || ''}</span>
+                                            <span style="font-size: 0.75rem; color: var(--text-muted);">${g.phone || 'Sin WhatsApp'}</span>
                                         </td>
                                         <td style="padding: 8px 6px; font-weight: bold; color: var(--accent-gold);">${g.pax_count || 1}</td>
                                         <td style="padding: 8px 6px; color: var(--text-muted);">${g.table_number || 'General'}</td>
+                                        <td style="padding: 8px 6px; font-family: monospace; font-size: 0.75rem; color: var(--text-gold);">${g.qr_token || 'QR-PASS'}</td>
                                         <td style="padding: 8px 6px;">
                                             <span class="status-pill ${g.checked_in ? 'confirmado' : 'revision'}" style="font-size: 0.7rem;">
-                                                ${g.checked_in ? 'EN EVENTO' : 'NO INGRESÓ'}
+                                                ${g.checked_in ? 'EN EVENTO' : 'PENDIENTE'}
                                             </span>
                                         </td>
                                     </tr>
@@ -308,7 +522,10 @@ async function viewGuestsForInvitation(invId, title) {
                     `}
                 </div>
 
-                <div style="margin-top: 1.5rem; text-align: right;">
+                <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <button class="btn btn-secondary btn-sm" onclick="promptAddGuestManually('${invId}', '${title}')">
+                        + Registrar Invitado Manual
+                    </button>
                     <button class="btn btn-outline btn-sm" onclick="closeInvitationModal()">Cerrar</button>
                 </div>
             </div>
@@ -317,8 +534,26 @@ async function viewGuestsForInvitation(invId, title) {
     }
 }
 
+async function promptAddGuestManually(invId, title) {
+    const name = prompt("Nombre y Apellido del invitado:");
+    if (!name || !name.trim()) return;
+    const pax = prompt("Cantidad de pases / PAX:", "1");
+
+    showToast('⏳ Registrando invitado en Supabase...');
+    await window.DB.addGuestManually({
+        invitationId: invId,
+        guestName: name.trim(),
+        paxCount: parseInt(pax) || 1,
+        tableNumber: 'Mesa Asignada Manualmente'
+    });
+
+    viewGuestsForInvitation(invId, title);
+    renderAdminInvitationsList();
+    showToast(`✅ Invitado "${name}" registrado exitosamente.`);
+}
+
 // ====================================================================
-// PESTAÑA: CONTROL DE ACCESO / VALIDADOR DE PASES QR EN PUERTA
+// 5. CONTROL DE ACCESO / VALIDADOR QR EN PUERTA
 // ====================================================================
 
 function renderAdminCheckInModule() {
@@ -397,14 +632,16 @@ async function handleSaveSupabaseConfig() {
         showToast('🟢 ¡Conectado exitosamente a Supabase PostgreSQL!');
         closeSupabaseConfigModal();
         renderAdminDashboard();
-        if (window.renderDrinksCatalog) window.renderDrinksCatalog();
+        if (window.renderDrinksCatalog) window.renderDrinksCatalog('all');
         if (window.renderInvitationShowcase) window.renderInvitationShowcase();
     } else {
-        showToast('⚠️ No se pudo conectar. Verifica que la Anon Key sea correcta y hayas ejecutado supabase_schema.sql');
+        showToast('⚠️ Clave configurada. Asegúrate de haber ejecutado supabase_schema.sql en Supabase SQL Editor.');
     }
 }
 
 window.renderAdminDashboard = renderAdminDashboard;
+window.renderAdminDrinksTable = renderAdminDrinksTable;
+window.renderAdminPackagesTable = renderAdminPackagesTable;
 window.renderAdminInvitationsList = renderAdminInvitationsList;
 window.filterAdminBookings = filterAdminBookings;
 window.approvePayment = approvePayment;
@@ -414,7 +651,17 @@ window.syncWithGoogleCalendar = syncWithGoogleCalendar;
 window.sendWhatsAppNotification = sendWhatsAppNotification;
 window.switchAdminTab = switchAdminTab;
 window.viewGuestsForInvitation = viewGuestsForInvitation;
+window.promptAddGuestManually = promptAddGuestManually;
 window.validateGuestQrCode = validateGuestQrCode;
 window.openSupabaseConfigModal = openSupabaseConfigModal;
 window.closeSupabaseConfigModal = closeSupabaseConfigModal;
 window.handleSaveSupabaseConfig = handleSaveSupabaseConfig;
+window.openCreateDrinkModal = openCreateDrinkModal;
+window.openEditDrinkModal = openEditDrinkModal;
+window.closeDrinkEditorModal = closeDrinkEditorModal;
+window.handleSaveDrink = handleSaveDrink;
+window.handleDeleteDrink = handleDeleteDrink;
+window.openEditPackageModal = openEditPackageModal;
+window.closePackageEditorModal = closePackageEditorModal;
+window.handleSavePackage = handleSavePackage;
+window.handleDeleteInvitation = handleDeleteInvitation;

@@ -1,14 +1,16 @@
 // js/app.js - Principal Controller for Bartender Pro Cochabamba
 
+let isAdminPortalOpen = false;
+
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
 });
 
 async function initApp() {
+    await renderPackagesCatalog();
     await renderDrinksCatalog('all');
     await renderGallery('all');
     initNavigation();
-    initModeSwitcher();
 }
 
 function initNavigation() {
@@ -21,30 +23,67 @@ function initNavigation() {
     });
 }
 
-function initModeSwitcher() {
-    const clientBtn = document.getElementById('modeClientBtn');
-    const adminBtn = document.getElementById('modeAdminBtn');
+function toggleAdminPortal() {
+    isAdminPortalOpen = !isAdminPortalOpen;
     const clientView = document.getElementById('clientViewSection');
     const adminView = document.getElementById('adminDashboardSection');
+    const adminNavBtn = document.getElementById('navAdminPortalBtn');
 
-    if (clientBtn && adminBtn) {
-        clientBtn.addEventListener('click', () => {
-            clientBtn.classList.add('active');
-            adminBtn.classList.remove('active');
-            clientView.style.display = 'block';
-            adminView.classList.remove('active');
-            showToast('👁️ Cambiado a Vista Cliente / Usuario');
-        });
-
-        adminBtn.addEventListener('click', () => {
-            adminBtn.classList.add('active');
-            clientBtn.classList.remove('active');
-            clientView.style.display = 'none';
-            adminView.classList.add('active');
-            if (window.renderAdminDashboard) window.renderAdminDashboard();
-            showToast('⚙️ Cambiado a Panel de Administración (Modo Bartender)');
-        });
+    if (isAdminPortalOpen) {
+        if (clientView) clientView.style.display = 'none';
+        if (adminView) adminView.classList.add('active');
+        if (adminNavBtn) {
+            adminNavBtn.innerText = '👁️ Vista Cliente';
+            adminNavBtn.className = 'btn btn-primary btn-sm';
+        }
+        if (window.renderAdminDashboard) window.renderAdminDashboard();
+        showToast('⚙️ Accediendo al Panel de Administración de Bartender Pro');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        if (clientView) clientView.style.display = 'block';
+        if (adminView) adminView.classList.remove('active');
+        if (adminNavBtn) {
+            adminNavBtn.innerText = '⚙️ Panel Admin';
+            adminNavBtn.className = 'btn btn-outline btn-sm';
+        }
+        showToast('👁️ Cambiado a Vista Pública de Clientes');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+}
+
+// Packages Catalog Renderer
+async function renderPackagesCatalog() {
+    const container = document.getElementById('packagesCatalogContainer');
+    if (!container) return;
+
+    const packages = await window.DB.getPackages();
+
+    container.innerHTML = packages.map(p => `
+        <div class="pkg-card ${p.popular ? 'popular' : ''}">
+            <span class="pkg-badge" style="${p.popular ? '' : 'background: rgba(255,255,255,0.15); color: #fff;'}">
+                ${p.badge || 'Barra Completa'}
+            </span>
+            <div class="pkg-header">
+                <h3 class="pkg-name" style="${p.popular ? 'color: var(--accent-gold);' : ''}">${p.name}</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted);">${p.description}</p>
+                <div class="pkg-price-box">
+                    <span class="pkg-price">Bs. ${p.price}</span>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">/ evento</span>
+                </div>
+                <span class="pkg-capacity">${p.capacity}</span>
+            </div>
+
+            <ul class="pkg-includes-list">
+                ${(p.includes || []).map(inc => `
+                    <li><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> ${inc}</li>
+                `).join('')}
+            </ul>
+
+            <button class="${p.popular ? 'btn btn-primary' : 'btn btn-outline'}" style="width: 100%;" onclick="openBookingModal('${p.id}')">
+                ${p.popular ? 'Reservar Paquete' : 'Seleccionar Paquete'}
+            </button>
+        </div>
+    `).join('');
 }
 
 // Drink Catalog Renderer
@@ -162,4 +201,6 @@ window.filterGallery = filterGallery;
 window.openLightbox = openLightbox;
 window.showToast = showToast;
 window.renderDrinksCatalog = renderDrinksCatalog;
+window.renderPackagesCatalog = renderPackagesCatalog;
 window.renderGallery = renderGallery;
+window.toggleAdminPortal = toggleAdminPortal;
