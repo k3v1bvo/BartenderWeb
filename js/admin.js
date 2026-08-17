@@ -454,8 +454,11 @@ async function renderAdminInvitationsList() {
                 </button>
             </div>
             <div style="display: flex; gap: 0.5rem;">
+                <button class="btn btn-primary btn-sm" style="flex: 1;" onclick="openEventQrModal('${inv.slug || inv.id}', '${inv.title}')">
+                    📱 Código QR
+                </button>
                 <button class="btn btn-secondary btn-sm" style="flex: 1;" onclick="shareInvitationWhatsApp('${inv.slug || inv.id}', '${inv.title}')">
-                    📲 Enviar WhatsApp
+                    📲 WhatsApp
                 </button>
                 <button class="btn btn-outline btn-sm" style="color: #EF4444; border-color: #EF4444;" title="Eliminar Invitación" onclick="handleDeleteInvitation('${inv.id}', '${inv.title}')">
                     🗑️

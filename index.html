@@ -12,7 +12,8 @@
   
   <!-- External CDNs -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
@@ -918,6 +919,50 @@
           </button>
           <button class="btn btn-outline btn-sm" onclick="closeSupabaseConfigModal()">
             Cancelar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== MODAL DE CÓDIGO QR OFICIAL DEL EVENTO ==================== -->
+  <div id="eventQrModalOverlay" class="modal-overlay">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.4rem;">📱</span>
+          <h3 style="color: var(--accent-gold); font-size: 1.2rem;">Código QR Oficial del Evento</h3>
+        </div>
+        <button class="modal-close" onclick="closeEventQrModal()">✕</button>
+      </div>
+      <div class="modal-body" style="padding: 1.75rem; text-align: center;">
+        <h4 id="eventQrModalTitle" style="font-size: 1.2rem; color: #FFF; margin-bottom: 0.25rem;">Boda Carlos & Sofía</h4>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Escanea para abrir la invitación web o descárgalo para imprimir en tarjetas y mesas.
+        </p>
+
+        <!-- Contenedor del QR Real -->
+        <div style="background: #FFFFFF; padding: 16px; border-radius: var(--radius-md); display: inline-block; box-shadow: var(--shadow-gold); margin-bottom: 1.25rem; border: 3px solid var(--accent-gold);">
+          <div id="eventQrCodeContainer" style="width: 220px; height: 220px; display: flex; align-items: center; justify-content: center;">
+            <canvas id="eventQrCanvas" width="220" height="220" style="display: block; width: 100%; height: 100%;"></canvas>
+          </div>
+        </div>
+
+        <!-- Enlace Web -->
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-size: 0.75rem; color: var(--text-gold); display: block; margin-bottom: 4px; font-weight: bold;">ENLACE DE LA INVITACIÓN:</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="text" id="eventQrUrlInput" class="rsvp-input" readonly style="font-size: 0.8rem; margin-bottom: 0; text-align: center; color: #FFF; background: rgba(0,0,0,0.5);">
+            <button class="btn btn-secondary btn-sm" onclick="copyEventQrUrl()">📋 Copiar</button>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
+          <button class="btn btn-primary btn-sm" onclick="downloadEventQrImage()" style="justify-content: center;">
+            💾 Descargar QR (PNG)
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="shareEventQrWhatsApp()" style="justify-content: center;">
+            📲 Enviar WhatsApp
           </button>
         </div>
       </div>
