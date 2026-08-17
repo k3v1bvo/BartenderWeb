@@ -278,8 +278,22 @@
   background: var(--bg-card);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  padding: 3rem 2rem;
+  padding: 2rem;
   box-shadow: var(--shadow-blue);
+}
+
+/* Guard Door Grid: Camera Scanner Left, Door Guest List Right */
+.guard-door-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+@media (max-width: 992px) {
+  .guard-door-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
@@ -289,4 +303,5 @@
     gap: 1rem;
   }
 }
+
 

@@ -14,6 +14,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
   <!-- CSS StyleSheets -->
   <link rel="stylesheet" href="css/styles.css">
@@ -518,28 +519,137 @@
         </div>
       </div>
 
-      <!-- TAB 5: CONTROL DE ACCESO / VALIDADOR QR EN PUERTA -->
+      <!-- TAB 5: MODO GUARDIA / CONTROL DE ACCESO EN PUERTA CON CÁMARA ESCÁNER -->
       <div id="adminView_checkin" class="admin-tab-view" style="display: none;">
-        <div class="admin-checkin-card">
-          <div style="text-align: center; max-width: 500px; margin: 0 auto;">
-            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎟️</div>
-            <h2 style="font-size: 1.6rem; color: var(--accent-gold); margin-bottom: 0.5rem;">Validador de Pases QR en Puerta</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-              Escanea el código QR del invitado con una cámara o ingresa su código de pase para marcar su ingreso en Supabase en tiempo real.
-            </p>
-
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
-              <input type="text" id="qrScannerInput" class="rsvp-input" placeholder="Ej: QR-BODA-MERCADO-881" style="text-align: center; font-size: 1.1rem; font-weight: bold; letter-spacing: 1px;">
-              <button class="btn btn-primary" onclick="validateGuestQrCode()">
-                ✓ Validar Ingreso
-              </button>
+        
+        <!-- Barra de Selección de Evento & Estado de Guardia -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; background: var(--bg-card); border: 1px solid var(--glass-border); padding: 1.25rem 1.5rem; border-radius: var(--radius-lg);">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.5rem;">🛡️</span>
+              <h3 style="font-size: 1.3rem; color: #FFF;">Control de Acceso en Puerta (Modo Guardia)</h3>
             </div>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+              Validación en tiempo real con cámara de celular o lector QR conectada a Supabase.
+            </p>
+          </div>
 
-            <div id="qrScannerResultBox" style="display: none; margin-top: 1rem;">
-              <!-- Result box dynamically populated -->
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <label style="font-size: 0.85rem; color: var(--text-gold); font-weight: bold;">Evento a Controlar:</label>
+            <select id="guardEventSelect" class="rsvp-input" style="width: auto; margin-bottom: 0; padding: 0.5rem 1rem;" onchange="loadGuardGuestList()">
+              <option value="all">Todos los Eventos Activos</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Métricas de Puerta (PAX / Asistencia) -->
+        <div class="admin-metrics-grid" style="margin-bottom: 2rem;">
+          <div class="metric-card">
+            <div class="metric-icon">👥</div>
+            <div class="metric-data">
+              <span id="guardTotalGuests" class="metric-val">0</span>
+              <span class="metric-lbl">Invitados Confirmados</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border-color: #10B981;">🎟️</div>
+            <div class="metric-data">
+              <span id="guardTotalPaxInside" class="metric-val" style="color: #10B981;">0</span>
+              <span class="metric-lbl">PAX Ingresados (Adentro)</span>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border-color: #F59E0B;">⏳</div>
+            <div class="metric-data">
+              <span id="guardPendingGuests" class="metric-val" style="color: #F59E0B;">0</span>
+              <span class="metric-lbl">Invitados Por Llegar</span>
             </div>
           </div>
         </div>
+
+        <!-- Grid Principal: Cámara Escáner a la izquierda + Lista de Asistentes a la derecha -->
+        <div class="guard-door-grid">
+          
+          <!-- Lado Izquierdo: Cámara Scanner QR y Resultado -->
+          <div class="admin-checkin-card" style="padding: 1.75rem;">
+            <div style="text-align: center; margin-bottom: 1.25rem;">
+              <h4 style="font-size: 1.15rem; color: var(--accent-gold); margin-bottom: 0.25rem;">📷 Escáner de Pases con Cámara</h4>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">Apunta la cámara del celular o laptop al pase QR del invitado.</p>
+            </div>
+
+            <!-- Botones de Control de Cámara -->
+            <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1rem;">
+              <button id="btnStartCamera" class="btn btn-primary btn-sm" onclick="startCameraScanner()">
+                📸 Iniciar Cámara Escáner
+              </button>
+              <button id="btnStopCamera" class="btn btn-outline btn-sm" style="display: none;" onclick="stopCameraScanner()">
+                ⏹️ Detener Cámara
+              </button>
+            </div>
+
+            <!-- Visor de la Cámara -->
+            <div id="qrCameraContainer" style="display: none; border-radius: var(--radius-md); overflow: hidden; border: 2px solid var(--accent-gold); max-width: 360px; margin: 0 auto 1.25rem auto; background: #000; position: relative;">
+              <div id="html5QrReader" style="width: 100%;"></div>
+            </div>
+
+            <!-- Entrada Manual de Código de Respaldo -->
+            <div style="border-top: 1px solid var(--glass-border-subtle); padding-top: 1.25rem; margin-top: 1rem;">
+              <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 4px;">¿Ingreso Manual por Código o Token?</label>
+              <div style="display: flex; gap: 0.5rem;">
+                <input type="text" id="qrScannerInput" class="rsvp-input" placeholder="Ej: QR-BODA-MERCADO-881" style="text-align: center; font-weight: bold; letter-spacing: 1px; margin-bottom: 0;">
+                <button class="btn btn-primary btn-sm" onclick="validateGuestQrCode()">
+                  ✓ Validar
+                </button>
+              </div>
+            </div>
+
+            <!-- Tarjeta de Resultado Dinámico del Pase -->
+            <div id="qrScannerResultBox" style="display: none; margin-top: 1.5rem;">
+              <!-- Dynamic Result populated by admin.js -->
+            </div>
+          </div>
+
+          <!-- Lado Derecho: Lista de Control de Puerta en Tiempo Real -->
+          <div class="admin-table-container" style="margin-bottom: 0;">
+            <div class="table-top-bar" style="padding: 1.25rem 1.5rem;">
+              <div>
+                <h4 style="font-size: 1.1rem; color: #FFF;">📋 Lista de Invitados de Puerta</h4>
+                <span style="font-size: 0.78rem; color: var(--text-muted);">Control y verificación rápida de acompañantes</span>
+              </div>
+
+              <!-- Filtro rápido de puerta -->
+              <div style="display: flex; gap: 0.4rem;">
+                <button class="filter-btn-sm active" id="filterGuardAll" onclick="filterGuardList('all', this)">Todos</button>
+                <button class="filter-btn-sm" id="filterGuardInside" onclick="filterGuardList('inside', this)">Adentro</button>
+                <button class="filter-btn-sm" id="filterGuardPending" onclick="filterGuardList('pending', this)">Por Llegar</button>
+              </div>
+            </div>
+
+            <!-- Buscador en tiempo real -->
+            <div style="padding: 0.75rem 1.5rem; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--glass-border-subtle);">
+              <input type="text" id="guardSearchInput" class="rsvp-input" placeholder="🔍 Buscar invitado por nombre..." style="margin-bottom: 0; padding: 0.5rem 1rem; font-size: 0.85rem;" oninput="handleGuardSearch(this.value)">
+            </div>
+
+            <div class="responsive-table" style="max-height: 420px; overflow-y: auto;">
+              <table class="admin-table" style="font-size: 0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Invitado</th>
+                    <th>PAX</th>
+                    <th>Mesa</th>
+                    <th>Estado / Hora</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="guardDoorTableBody">
+                  <!-- Rendered dynamically by admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
