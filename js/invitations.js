@@ -173,160 +173,192 @@ async function openInvitationModalBySlug(slugOrId) {
     // Google Calendar URL Generator
     const gCalUrl = generateGoogleCalendarUrl(inv);
 
+    // Tipo de evento etiqueta caligráfica
+    const calligraphyLabels = {
+        boda: 'Nuestra Boda',
+        quince: 'Mis 15 Años',
+        corporativo: 'Gala Exclusiva',
+        cumpleanos: 'Celebración VIP',
+        graduacion: 'Nuestra Graduación'
+    };
+    const eventCalligraphy = calligraphyLabels[inv.type] || 'Estás Invitado';
+
     modalContainer.innerHTML = `
         <div class="inv-phone-screen ${inv.bgStyle || 'boda-theme'}">
-            <!-- Botón cerrar -->
-            <button class="inv-close-btn" onclick="closeInvitationModal()">✕</button>
+            <!-- Botón cerrar elegante -->
+            <button class="inv-close-btn" onclick="closeInvitationModal()" title="Cerrar Invitación">✕</button>
 
-            <!-- Encabezado de lujo -->
+            <!-- Encabezado de Lujo con Sello Monograma y Tipografía Nupcial -->
             <div class="inv-hero-header">
-                <div class="inv-monogram">${monogram}</div>
+                <div class="inv-monogram-seal">
+                    <span class="inv-monogram-text">${monogram}</span>
+                </div>
+                
+                <span class="inv-calligraphy-badge">${eventCalligraphy}</span>
                 <h1 class="inv-title">${inv.title}</h1>
                 <p class="inv-subtitle">Tenemos el honor de invitarte a celebrar con nosotros</p>
-                <div class="inv-divider">✦ ✦ ✦</div>
+                
+                <div class="inv-ornament-divider">✦ ── ⚜ ── ✦</div>
             </div>
 
-            <!-- Cronómetro Regresivo Dinámico -->
-            <div class="inv-countdown-box">
-                <span class="countdown-label">FALTAN PARA EL GRAN DÍA</span>
-                <div class="countdown-digits">
-                    <div class="cd-item"><span id="cdDays">00</span><small>DÍAS</small></div>
-                    <div class="cd-item"><span id="cdHours">00</span><small>HRS</small></div>
-                    <div class="cd-item"><span id="cdMinutes">00</span><small>MIN</small></div>
-                    <div class="cd-item"><span id="cdSeconds">00</span><small>SEG</small></div>
+            <!-- Cronómetro Regresivo de Gala -->
+            <div class="inv-countdown-luxury">
+                <span class="countdown-luxury-label">CUENTA REGRESIVA PARA EL GRAN DÍA</span>
+                <div class="countdown-luxury-grid">
+                    <div class="countdown-box-item">
+                        <span id="cdDays" class="countdown-box-num">00</span>
+                        <span class="countdown-box-lbl">DÍAS</span>
+                    </div>
+                    <div class="countdown-box-item">
+                        <span id="cdHours" class="countdown-box-num">00</span>
+                        <span class="countdown-box-lbl">HORAS</span>
+                    </div>
+                    <div class="countdown-box-item">
+                        <span id="cdMinutes" class="countdown-box-num">00</span>
+                        <span class="countdown-box-lbl">MIN</span>
+                    </div>
+                    <div class="countdown-box-item">
+                        <span id="cdSeconds" class="countdown-box-num">00</span>
+                        <span class="countdown-box-lbl">SEG</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Itinerario y Detalles del Evento -->
-            <div class="inv-details-card">
-                <div class="inv-detail-row">
-                    <div class="inv-detail-icon">📅</div>
+            <!-- Tarjeta de Detalles del Evento (Itinerario & Salón) -->
+            <div class="inv-details-luxury-card">
+                <div class="inv-luxury-row">
+                    <div class="inv-icon-badge">📅</div>
                     <div>
-                        <strong>Fecha del Evento</strong>
-                        <span>${inv.date} • ${inv.time || '17:00 HRS'}</span>
+                        <span class="inv-row-label">Fecha & Hora</span>
+                        <span class="inv-row-value">${inv.date} • ${inv.time || '17:00 HRS'}</span>
                     </div>
                 </div>
 
-                <div class="inv-detail-row">
-                    <div class="inv-detail-icon">📍</div>
+                <div class="inv-luxury-row">
+                    <div class="inv-icon-badge">📍</div>
                     <div>
-                        <strong>Lugar de Recepción</strong>
-                        <span>${inv.location}</span>
-                        <a href="https://maps.google.com/?q=${encodeURIComponent(inv.location + ', Cochabamba, Bolivia')}" target="_blank" class="inv-map-link">
-                            🗺️ Ver Ubicación en Google Maps / Waze ➔
+                        <span class="inv-row-label">Lugar de Recepción</span>
+                        <span class="inv-row-value" style="display: block; margin-bottom: 4px;">${inv.location}</span>
+                        <a href="https://maps.google.com/?q=${encodeURIComponent(inv.location + ', Cochabamba, Bolivia')}" target="_blank" class="inv-map-btn-luxury">
+                            🗺️ Abrir en Google Maps / Waze ➔
                         </a>
                     </div>
                 </div>
 
-                <div class="inv-detail-row">
-                    <div class="inv-detail-icon">👔</div>
+                <div class="inv-luxury-row">
+                    <div class="inv-icon-badge">👔</div>
                     <div>
-                        <strong>Código de Vestimenta</strong>
-                        <span>${inv.dressCode || 'Rigurosa Gala / Formal'}</span>
+                        <span class="inv-row-label">Código de Vestimenta</span>
+                        <span class="inv-row-value">${inv.dressCode || 'Rigurosa Gala / Formal'}</span>
                     </div>
                 </div>
 
-                <!-- Botón Google Calendar -->
-                <div style="margin-top: 1rem;">
-                    <a href="${gCalUrl}" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center; text-decoration: none;">
+                <!-- Botón Google Calendar Elegante -->
+                <div style="margin-top: 1.25rem;">
+                    <a href="${gCalUrl}" target="_blank" class="btn btn-secondary btn-sm" style="width: 100%; justify-content: center; text-decoration: none; border-color: rgba(212,175,55,0.4);">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
                         Agendar en Google Calendar
                     </a>
                 </div>
             </div>
 
-            <!-- Dedicatoria de los anfitriones -->
+            <!-- Dedicatoria de los Anfitriones -->
             ${inv.welcomeMessage ? `
-                <div style="padding: 1.5rem; text-align: center; font-style: italic; color: #E2E8F0; font-size: 0.9rem; line-height: 1.6; background: rgba(0,0,0,0.25); margin: 0 1rem 1.5rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border-subtle);">
+                <div style="padding: 1.5rem; text-align: center; font-style: italic; color: #F1F5F9; font-size: 0.92rem; line-height: 1.6; background: rgba(0,0,0,0.35); margin: 0 1.25rem 1.75rem 1.25rem; border-radius: 16px; border: 1px solid rgba(212,175,55,0.25);">
                     "${inv.welcomeMessage}"
-                    <div style="margin-top: 0.5rem; font-weight: bold; font-style: normal; color: var(--accent-gold);">${inv.hostName}</div>
+                    <div style="margin-top: 0.6rem; font-weight: bold; font-style: normal; color: #D4AF37; font-family: 'Cinzel', serif; font-size: 0.85rem;">— ${inv.hostName} —</div>
                 </div>
             ` : ''}
 
-            <!-- Barra de Coctelería del Evento -->
-            <div style="background: rgba(11, 19, 43, 0.6); padding: 1.25rem; margin: 0 1rem 1.5rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--glass-border); text-align: center;">
-                <span style="font-size: 0.75rem; color: var(--text-gold); font-weight: bold; letter-spacing: 1px; display: block; margin-bottom: 0.3rem;">BARRA LIBRE EXCLUSIVA</span>
-                <h4 style="font-size: 1.05rem; color: #FFF; margin-bottom: 0.5rem;">Coctelería por Bartender Pro CBBA</h4>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Disfruta de nuestros cócteles de autor con Singani de altura y show en vivo.</p>
-                <div style="display: flex; gap: 0.5rem; justify-content: center; font-size: 0.75rem; color: var(--accent-gold);">
-                    <span>🍸 Chuflay Gran Reserva</span> • 
-                    <span>🍹 Tumbo Sour</span> • 
-                    <span>🍓 Gin Rosé</span>
+            <!-- Barra de Coctelería de Autor (Bartender Pro) -->
+            <div class="inv-bar-luxury-card">
+                <span class="inv-bar-tag">BARRA LIBRE DE AUTOR</span>
+                <h4 class="inv-bar-title">Coctelería por Bartender Pro CBBA</h4>
+                <p class="inv-bar-desc">Cocteles de autor con Singani de altura, frutas del valle y show en vivo.</p>
+                <div class="inv-bar-cocktails-chips">
+                    <span class="inv-cocktail-chip">🍸 Chuflay Gran Reserva</span>
+                    <span class="inv-cocktail-chip">🍹 Tumbo Sour Royale</span>
+                    <span class="inv-cocktail-chip">🍓 Gin Rosé de Altura</span>
+                    <span class="inv-cocktail-chip">🔥 Flameado en Barra</span>
                 </div>
             </div>
 
-            <!-- FORMULARIO DE CONFIRMACIÓN RSVP -->
-            <div class="inv-rsvp-section">
-                <div class="rsvp-card">
-                    <span class="rsvp-tag">CONFIRMACIÓN DE ASISTENCIA</span>
-                    <h3 class="rsvp-title">¿Nos acompañas?</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
-                        Por favor confirma tu asistencia para asignarte mesa y emitir tu pase digital con código QR.
+            <!-- FORMULARIO NUPCIAL RSVP & TARJETA DE CONFIRMACIÓN -->
+            <div class="inv-rsvp-wrapper">
+                <div id="rsvpFormFields">
+                    <div class="rsvp-luxury-header">
+                        <span class="rsvp-script-title">R. S. V. P.</span>
+                        <h3 class="rsvp-main-title">Confirmación de Asistencia</h3>
+                        <p style="font-size: 0.82rem; color: #94A3B8; margin-top: 4px;">
+                            Confirma tu presencia para asignarte mesa y generar tu pase digital VIP.
+                        </p>
+                    </div>
+
+                    <div style="text-align: left; margin-bottom: 0.85rem;">
+                        <label style="font-size: 0.72rem; color: #D4AF37; display: block; margin-bottom: 3px; font-weight: 700; letter-spacing: 1px;">NOMBRE Y APELLIDO *</label>
+                        <input type="text" id="rsvpGuestName" class="rsvp-luxury-input" placeholder="Ej: Lic. Rodrigo Morales">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; text-align: left; margin-bottom: 0.85rem;">
+                        <div>
+                            <label style="font-size: 0.72rem; color: #D4AF37; display: block; margin-bottom: 3px; font-weight: 700; letter-spacing: 1px;">WHATSAPP</label>
+                            <input type="tel" id="rsvpGuestPhone" class="rsvp-luxury-input" placeholder="+591 797XXXXX">
+                        </div>
+                        <div>
+                            <label style="font-size: 0.72rem; color: #D4AF37; display: block; margin-bottom: 3px; font-weight: 700; letter-spacing: 1px;">PASES / PAX</label>
+                            <select class="rsvp-luxury-input" id="rsvpGuestPax">
+                                <option value="1">1 Persona (Individual)</option>
+                                <option value="2" selected>2 Personas (Pareja)</option>
+                                <option value="3">3 Personas</option>
+                                <option value="4">Pase Familiar (4+)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="text-align: left; margin-bottom: 1.25rem;">
+                        <label style="font-size: 0.72rem; color: #D4AF37; display: block; margin-bottom: 3px; font-weight: 700; letter-spacing: 1px;">MENSAJE O CANCIÓN PARA EL DJ (OPCIONAL)</label>
+                        <input type="text" id="rsvpGuestNotes" class="rsvp-luxury-input" placeholder="Canción para bailar o preferencia dietética">
+                    </div>
+
+                    <button class="btn-luxury-gold" onclick="handleRSVPSubmit()">
+                        ✨ Confirmar Asistencia & Generar Pase VIP
+                    </button>
+                </div>
+
+                <!-- PASE VIP DIGITAL (GOLDEN TICKET CONFIRMATION) -->
+                <div id="rsvpSuccessBox" class="golden-ticket-card" style="display: none;">
+                    <div class="ticket-notch-left"></div>
+                    <div class="ticket-notch-right"></div>
+
+                    <span class="golden-ticket-badge">✦ PASE DIGITAL VIP • ACCESO AUTORIZADO ✦</span>
+                    
+                    <h3 id="rsvpPassGuestName" class="golden-ticket-guest">Invitado Oficial</h3>
+                    
+                    <div class="golden-ticket-meta">
+                        <span id="rsvpPassPaxText">🎟️ 2 Personas</span> • 
+                        <span>🍽️ Mesa Asignada</span>
+                    </div>
+
+                    <div class="golden-qr-frame">
+                        <canvas id="rsvpQrCanvas" width="180" height="180" style="display: block;"></canvas>
+                    </div>
+
+                    <strong id="rsvpQrTokenText" style="color: #D4AF37; font-family: monospace; font-size: 0.95rem; letter-spacing: 2px; display: block; margin-bottom: 0.5rem;">QR-PASS</strong>
+                    
+                    <p style="font-size: 0.78rem; color: #94A3B8; margin-bottom: 1.25rem;">
+                        Presenta este código QR en la mesa de recepción del salón.
                     </p>
 
-                    <div id="rsvpFormFields" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                        <div>
-                            <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 2px;">Nombre y Apellido *</label>
-                            <input type="text" id="rsvpGuestName" class="rsvp-input" placeholder="Ej: Dr. Fernando Mercado">
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 2px;">WhatsApp</label>
-                                <input type="tel" id="rsvpGuestPhone" class="rsvp-input" placeholder="+591 797XXXXX">
-                            </div>
-                            <div>
-                                <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 2px;">Pases / PAX</label>
-                                <select class="rsvp-input" id="rsvpGuestPax">
-                                    <option value="1">1 Persona (Individual)</option>
-                                    <option value="2" selected>2 Personas (Pareja)</option>
-                                    <option value="3">3 Personas</option>
-                                    <option value="4">Pase Familiar (4+)</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 2px;">Mensaje o Canción para el DJ (Opcional)</label>
-                            <input type="text" id="rsvpGuestNotes" class="rsvp-input" placeholder="Canción favorita o nota dietética">
-                        </div>
-
-                        <button class="btn btn-primary" style="width: 100%; margin-top: 0.5rem; justify-content: center;" onclick="handleRSVPSubmit()">
-                            ✨ Confirmar Asistencia y Generar Pase QR
-                        </button>
-                    </div>
-
-                    <!-- Resultado y Pase QR Generado -->
-                    <div id="rsvpSuccessBox" style="display: none; margin-top: 1.5rem; background: rgba(16, 185, 129, 0.12); border: 1px solid #10B981; padding: 1.25rem; border-radius: var(--radius-md); text-align: center;">
-                        <div style="font-size: 1.8rem; margin-bottom: 0.3rem;">🎉</div>
-                        <strong style="color: #10B981; font-size: 1.05rem; display: block; margin-bottom: 0.3rem;">¡Asistencia Confirmada!</strong>
-                        <p style="font-size: 0.8rem; color: #E2E8F0; margin-bottom: 1rem;">Tu pase digital ha sido emitido y registrado en la base de datos.</p>
-
-                        <!-- Contenedor del QR Canvas y Real Image -->
-                        <div style="background: #FFFFFF; padding: 12px; border-radius: var(--radius-md); display: inline-block; box-shadow: var(--shadow-gold); margin-bottom: 0.75rem; border: 2px solid var(--accent-gold);">
-                            <div id="rsvpQrCanvasContainer" style="width: 170px; height: 170px; display: flex; align-items: center; justify-content: center;">
-                                <canvas id="rsvpQrCanvas" width="170" height="170" style="display: block; width: 100%; height: 100%;"></canvas>
-                            </div>
-                        </div>
-
-                        <div style="font-size: 0.8rem; color: #FFF; margin-bottom: 0.75rem;">
-                            <strong id="rsvpQrTokenText" style="color: var(--accent-gold); letter-spacing: 1px; display: block; font-size: 0.9rem;">QR-PASS</strong>
-                            <span id="rsvpPassGuestName" style="color: #94A3B8;">Invitado Oficial</span>
-                        </div>
-
-                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">Presenta este código QR en la entrada del salón.</p>
-
-                        <button class="btn btn-secondary btn-sm" onclick="downloadQrPass()" style="width: 100%; justify-content: center;">
-                            💾 Descargar Pase Digital
-                        </button>
-                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="downloadQrPass()" style="width: 100%; justify-content: center;">
+                        💾 Descargar Pase VIP en Mi Celular (PNG)
+                    </button>
                 </div>
             </div>
 
-            <!-- Pie de página de la invitación -->
-            <div style="text-align: center; padding: 1.5rem; background: rgba(0,0,0,0.6); font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--glass-border-subtle);">
+            <!-- Branding Footer -->
+            <div class="inv-footer-branding">
                 Desarrollado con 🍸 <strong>Bartender Pro Cochabamba</strong><br>
-                Plataforma de Invitaciones & Coctelería de Autor
+                Coctelería de Autor & Plataforma de Invitaciones Digitales
             </div>
         </div>
     `;
@@ -580,38 +612,65 @@ function updateBuilderLivePreview() {
     const dress = document.getElementById('builderDressCode')?.value || 'Rigurosa Gala';
     const message = document.getElementById('builderMessage')?.value || 'Nos llena de emoción compartir este momento contigo.';
     const bgStyle = document.getElementById('builderBgStyle')?.value || 'boda-theme';
+    const type = document.getElementById('builderEventType')?.value || 'boda';
+
+    const calligraphyLabels = {
+        boda: 'Nuestra Boda',
+        quince: 'Mis 15 Años',
+        corporativo: 'Gala Exclusiva',
+        cumpleanos: 'Celebración VIP',
+        graduacion: 'Nuestra Graduación'
+    };
+    const eventCalligraphy = calligraphyLabels[type] || 'Nuestra Celebración';
+
+    // Monograma corto
+    const parts = host.split(' ');
+    const mono = parts.length > 1 ? `${parts[0].charAt(0)} & ${parts[1].charAt(0)}` : host.substring(0, 2).toUpperCase();
 
     previewContainer.className = `inv-phone-screen ${bgStyle}`;
 
     previewContainer.innerHTML = `
-        <div class="inv-hero-header" style="padding: 1.5rem 1rem 1rem 1rem;">
-            <div class="inv-monogram" style="width: 50px; height: 50px; font-size: 1rem; margin-bottom: 0.5rem;">VIP</div>
+        <div class="inv-hero-header" style="padding: 2rem 1rem 1rem 1rem;">
+            <div class="inv-monogram-seal" style="width: 60px; height: 60px; margin-bottom: 0.75rem;">
+                <span class="inv-monogram-text" style="font-size: 1rem;">${mono}</span>
+            </div>
+            <span class="inv-calligraphy-badge" style="font-size: 1.6rem;">${eventCalligraphy}</span>
             <h2 class="inv-title" style="font-size: 1.3rem;">${title}</h2>
-            <p class="inv-subtitle" style="font-size: 0.75rem;">${host}</p>
-            <div class="inv-divider" style="margin: 0.5rem 0;">✦ ✦ ✦</div>
+            <p class="inv-subtitle" style="font-size: 0.68rem; letter-spacing: 2px;">${host}</p>
+            <div class="inv-ornament-divider" style="margin: 0.75rem auto;">✦ ── ⚜ ── ✦</div>
         </div>
 
-        <div class="inv-countdown-box" style="padding: 0.75rem; margin: 0 1rem 1rem 1rem;">
-            <span class="countdown-label" style="font-size: 0.65rem;">FALTAN PARA EL GRAN DÍA</span>
-            <div class="countdown-digits" style="gap: 0.3rem;">
-                <div class="cd-item" style="padding: 0.3rem;"><span style="font-size: 1rem;">45</span><small style="font-size: 0.55rem;">DÍAS</small></div>
-                <div class="cd-item" style="padding: 0.3rem;"><span style="font-size: 1rem;">12</span><small style="font-size: 0.55rem;">HRS</small></div>
-                <div class="cd-item" style="padding: 0.3rem;"><span style="font-size: 1rem;">30</span><small style="font-size: 0.55rem;">MIN</small></div>
+        <div class="inv-countdown-luxury" style="padding: 0.85rem 0.5rem; margin: 0 0.75rem 1rem 0.75rem;">
+            <span class="countdown-luxury-label" style="font-size: 0.6rem; margin-bottom: 0.4rem;">FALTAN PARA EL GRAN DÍA</span>
+            <div class="countdown-luxury-grid" style="gap: 0.3rem;">
+                <div class="countdown-box-item" style="padding: 0.4rem 0.2rem;"><span class="countdown-box-num" style="font-size: 1.1rem;">45</span><span class="countdown-box-lbl" style="font-size: 0.55rem;">DÍAS</span></div>
+                <div class="countdown-box-item" style="padding: 0.4rem 0.2rem;"><span class="countdown-box-num" style="font-size: 1.1rem;">12</span><span class="countdown-box-lbl" style="font-size: 0.55rem;">HRS</span></div>
+                <div class="countdown-box-item" style="padding: 0.4rem 0.2rem;"><span class="countdown-box-num" style="font-size: 1.1rem;">30</span><span class="countdown-box-lbl" style="font-size: 0.55rem;">MIN</span></div>
+                <div class="countdown-box-item" style="padding: 0.4rem 0.2rem;"><span class="countdown-box-num" style="font-size: 1.1rem;">00</span><span class="countdown-box-lbl" style="font-size: 0.55rem;">SEG</span></div>
             </div>
         </div>
 
-        <div class="inv-details-card" style="padding: 0.85rem; font-size: 0.8rem; margin: 0 1rem 1rem 1rem;">
-            <div style="margin-bottom: 0.4rem;"><strong>📅 Fecha:</strong> ${date} - ${time}</div>
-            <div style="margin-bottom: 0.4rem;"><strong>📍 Lugar:</strong> ${venue}</div>
-            <div><strong>👔 Código:</strong> <span style="color: var(--accent-gold);">${dress}</span></div>
+        <div class="inv-details-luxury-card" style="padding: 1rem; margin: 0 0.75rem 1rem 0.75rem; font-size: 0.8rem;">
+            <div style="margin-bottom: 0.6rem;">
+                <span class="inv-row-label" style="font-size: 0.65rem;">📅 FECHA & HORA</span>
+                <span class="inv-row-value" style="font-size: 0.85rem;">${date} • ${time}</span>
+            </div>
+            <div style="margin-bottom: 0.6rem;">
+                <span class="inv-row-label" style="font-size: 0.65rem;">📍 LUGAR</span>
+                <span class="inv-row-value" style="font-size: 0.85rem;">${venue}</span>
+            </div>
+            <div>
+                <span class="inv-row-label" style="font-size: 0.65rem;">👔 VESTIMENTA</span>
+                <span class="inv-row-value" style="font-size: 0.85rem; color: #D4AF37;">${dress}</span>
+            </div>
         </div>
 
-        <div style="padding: 0.75rem; text-align: center; font-style: italic; color: #E2E8F0; font-size: 0.75rem; background: rgba(0,0,0,0.3); margin: 0 1rem 1rem 1rem; border-radius: var(--radius-md);">
+        <div style="padding: 0.85rem; text-align: center; font-style: italic; color: #F1F5F9; font-size: 0.78rem; background: rgba(0,0,0,0.4); margin: 0 0.75rem 1rem 0.75rem; border-radius: 12px; border: 1px solid rgba(212,175,55,0.25);">
             "${message}"
         </div>
 
-        <div style="text-align: center; padding: 0.75rem; background: rgba(212,175,55,0.15); border-radius: var(--radius-md); margin: 0 1rem 1rem 1rem; border: 1px dashed var(--accent-gold);">
-            <span style="font-size: 0.75rem; color: var(--accent-gold); font-weight: bold;">📱 Formulario RSVP + Pase QR Incluidos</span>
+        <div style="text-align: center; padding: 0.85rem; background: rgba(212,175,55,0.12); border-radius: 12px; margin: 0 0.75rem 1rem 0.75rem; border: 1px dashed #D4AF37;">
+            <span style="font-size: 0.75rem; color: #D4AF37; font-weight: bold; font-family: 'Cinzel', serif;">✦ FORMULARIO RSVP + PASE VIP QR INCLUIDOS ✦</span>
         </div>
     `;
 }
